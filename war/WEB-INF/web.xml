@@ -10,6 +10,20 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
 
+
+	<servlet>
+		<description>
+		</description>
+		<display-name>BackendServiceServlet</display-name>
+		<servlet-name>BackendServiceServlet</servlet-name>
+		<servlet-class>
+		com.pri.labs.server.service.BackendServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BackendServiceServlet</servlet-name>
+		<url-pattern>/labs/Service</url-pattern>
+	</servlet-mapping>
+
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>com.pri.scilab.server.GreetingServiceImpl</servlet-class>
