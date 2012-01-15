@@ -17,21 +17,11 @@
 		<display-name>BackendServiceServlet</display-name>
 		<servlet-name>BackendServiceServlet</servlet-name>
 		<servlet-class>
-		com.pri.labs.server.service.BackendServiceServlet</servlet-class>
+		com.pri.scilab.server.service.BackendServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>BackendServiceServlet</servlet-name>
-		<url-pattern>/labs/Service</url-pattern>
+		<url-pattern>/scilab/Service</url-pattern>
 	</servlet-mapping>
-
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.pri.scilab.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/scilab/greet</url-pattern>
-  </servlet-mapping>
 
 </web-app>

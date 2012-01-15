@@ -12,6 +12,8 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
   <!-- Other module inherits                                      -->
+  
+  <inherits name="com.smartgwt.SmartGwt"/>
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.pri.scilab.client.Entry'/>

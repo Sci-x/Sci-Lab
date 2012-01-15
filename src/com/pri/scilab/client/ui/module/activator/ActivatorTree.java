@@ -3,7 +3,6 @@ package com.pri.scilab.client.ui.module.activator;
 import java.util.List;
 
 import com.smartgwt.client.types.TreeModelType;
-import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -21,6 +20,7 @@ public class ActivatorTree extends VLayout
  static final String NAME_PROP="name";
  static final String CHILDREN_PROP="children";
  static final String COMPONENT_PROP="component";
+ static final String ICON_PROP="icon";
  
  private final Tree treeModel = new Tree();
  private final TreeGrid tree = new TreeGrid();
@@ -53,7 +53,8 @@ public class ActivatorTree extends VLayout
   treeModel.openAll();
   
   final ToolStrip ts = new ToolStrip();
-  ts.setAlign(VerticalAlignment.CENTER);
+  ts.setWidth100();
+//  ts.setAlign(VerticalAlignment.CENTER);
   ts.setMembersMargin(3);
 //  ts.setPadding(2);
 
@@ -158,6 +159,7 @@ public class ActivatorTree extends VLayout
   myNode.setAttribute(NAME_PROP, ed.getName());
   myNode.setAttribute(CHILDREN_PROP, subedNodes);
   myNode.setAttribute(COMPONENT_PROP, ed);
+  myNode.setAttribute(ICON_PROP, ed.getIcon());
   
   ed.addHierarchyListener(new ComponentListener(myNode));
   

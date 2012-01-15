@@ -14,6 +14,8 @@ public class ActionStrip<T> extends ToolStrip
  
  public static <T> void putActions( ToolStrip ts, Action act, final T obj, final ActionHandler<T> hndl )
  {
+  ts.addSpacer(10);
+  
   for( final Action a : act.getSubActions() )
   {
    if( a.getText() == null )
