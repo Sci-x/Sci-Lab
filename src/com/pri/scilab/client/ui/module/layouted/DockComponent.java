@@ -33,9 +33,9 @@ public class DockComponent extends LayoutNodeComponent
  private String id; 
 
  
- public DockComponent( LayoutEditor led, DockContainerEditor cont, Dock d )
+ public DockComponent( LayoutEditor led, DockContainerComponent cont )
  {
-  super(led,cont,d);
+  super(led,cont);
  }
  
  public void setPanel( Canvas panel)
@@ -150,20 +150,19 @@ public class DockComponent extends LayoutNodeComponent
 
  public void setHeight( int ht )
  {
-  getDock().setHeight(ht);
+  super.setHeight(ht);
 
   if( getPanel() != null )
-   getPanel().setHeight(Dock.dim2String(ht));
+   getPanel().setHeight(dim2String(ht));
   
  }
  
  public void setWidth( int ht )
  {
-  getDock().setWidth(ht);
+  super.setWidth(ht);
 
   if( getPanel() != null )
-   getPanel().setWidth(Dock.dim2String(ht));
-  
+   getPanel().setWidth(dim2String(ht));
  }
 
  public String getId()
@@ -175,5 +174,6 @@ public class DockComponent extends LayoutNodeComponent
  {
   this.id = id;
  }
+
 
 }

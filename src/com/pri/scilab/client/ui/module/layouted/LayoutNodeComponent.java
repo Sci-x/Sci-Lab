@@ -1,39 +1,41 @@
 package com.pri.scilab.client.ui.module.layouted;
 
 import com.pri.scilab.client.ui.module.activator.AbstractComponent;
+import com.pri.scilab.client.ui.module.activator.Component;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;
 
 public abstract class LayoutNodeComponent extends AbstractComponent
 {
- private String id;
- private Dock dock;
+// private Dock dock;
  private LayoutEditor layEd;
  private Canvas panel;
- private DockContainerEditor container;
+ private int width;
+ private int height;
+// private DockContainerComponent container;
  
- protected LayoutNodeComponent( LayoutEditor led, DockContainerEditor cn,  Dock d )
+ protected LayoutNodeComponent( LayoutEditor led, DockContainerComponent cn )
  {
   layEd=led;
-  dock=d;
-  container=cn;
+//  dock=d;
+  setParentComponent(cn);
  }
  
- public Dock getDock()
- {
-  return dock;
- }
-
- public void setDock(Dock dock)
- {
-  this.dock = dock;
- }
- 
- public Dock.Type getType()
- {
-  return dock.getType();
- }
+// public Dock getDock()
+// {
+//  return dock;
+// }
+//
+// public void setDock(Dock dock)
+// {
+//  this.dock = dock;
+// }
+// 
+// public Dock.Type getType()
+// {
+//  return dock.getType();
+// }
 
  public LayoutEditor getLayoutEditor()
  {
@@ -53,7 +55,7 @@ public abstract class LayoutNodeComponent extends AbstractComponent
  @Override
  public String getName()
  {
-  return dock.getName();
+  return getId();
  }
  
  protected interface CallBack
@@ -107,20 +109,44 @@ public abstract class LayoutNodeComponent extends AbstractComponent
   
  }
 
- public DockContainerEditor getContainer()
+ public DockContainerComponent getContainer()
  {
-  return container;
+  Component parent = getParentComponent();
+  
+  if( parent == null || ! (parent instanceof DockContainerComponent) )
+   return null;
+  
+  return (DockContainerComponent)parent;
  }
 
- public String getId()
+ public int getWidth()
  {
-  return id;
+  return width;
  }
 
- public void setId(String id)
+ public void setWidth(int width)
  {
-  this.id = id;
+  this.width = width;
  }
 
+ public int getHeight()
+ {
+  return height;
+ }
 
+ public void setHeight(int height)
+ {
+  this.height = height;
+ }
+ 
+ public static String dim2String( int dim )
+ {
+  if( dim == 0 )
+   return "*";
+  
+  if( dim < 0 )
+   return String.valueOf(-dim)+"%";
+
+  return String.valueOf(dim);
+ }
 }

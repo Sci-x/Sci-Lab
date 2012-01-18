@@ -13,6 +13,7 @@ public interface Component extends ActionHandler<Component>
  String getId();
 
  List<Component> getSubComponents();
+ Component getParentComponent();
 
  void addHierarchyListener(HierarchyListener<Component> editorListener);
 

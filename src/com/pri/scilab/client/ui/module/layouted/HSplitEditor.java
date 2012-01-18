@@ -1,8 +1,6 @@
 package com.pri.scilab.client.ui.module.layouted;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -10,10 +8,12 @@ import com.pri.scilab.client.ui.module.activator.ComponentViewPort;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class HSplitEditor extends DockContainerEditor
+public class HSplitEditor extends DockContainerComponent
 {
  public enum Actions
  {
@@ -33,9 +33,9 @@ public class HSplitEditor extends DockContainerEditor
  });
  
  
- public HSplitEditor( LayoutEditor led, DockContainerEditor cn, Dock d )
+ public HSplitEditor( LayoutEditor led, DockContainerComponent cn)
  {
-  super(led, cn, d);
+  super(led, cn);
  }
  
  public void setPanel(Canvas panel)
@@ -134,28 +134,33 @@ public class HSplitEditor extends DockContainerEditor
  
  private void addCols( int colNum )
  {
-  List<Dock> subDks = getDock().getSubDocks();
-  
   HLayout panel = (HLayout)getPanel();
 
   for(int i=0; i < colNum; i++ )
   {
-   Dock nd = new Dock();
-   
-   nd.setName(getLayoutEditor().getNewDockName());
-   nd.setHeight(-100);
-   nd.setWidth(0);
-   nd.setType(Dock.Type.DOCK);
+   final DockComponent nde = new DockComponent(getLayoutEditor(), this);
 
-   subDks.add( nd );
    
-   DockComponent nde = new DockComponent(getLayoutEditor(), this, nd);
-   
+   nde.setId(getLayoutEditor().getNewDockName());
+   nde.setHeight(-100);
+   nde.setWidth(0);
+//   nd.setType(Dock.Type.DOCK);
+
    addChild(nde);
-
+   
    if( panel != null )
    {
-    DockPanel dkp = new DockPanel(Dock.dim2String(nd.getWidth()), Dock.dim2String(nd.getHeight()), nd, nde);
+    DockPanel dkp = new DockPanel(dim2String(nde.getWidth()), dim2String(nde.getHeight()), nde, nde);
+    
+    dkp.addClickHandler( new ClickHandler()
+    {
+     
+     @Override
+     public void onClick(ClickEvent event)
+     {
+      System.out.println("Clicked: "+nde.getId());
+     }
+    });
 
     panel.addMember(dkp);
     nde.setPanel(dkp);
@@ -169,7 +174,7 @@ public class HSplitEditor extends DockContainerEditor
  
  public void setHeight( int v )
  {
-  getDock().setHeight(v);
+  super.setHeight(v);
   
   if( getPanel() != null )
    getPanel().setHeight( Dock.dim2String(v) );
@@ -196,7 +201,7 @@ public class HSplitEditor extends DockContainerEditor
  }
 
  @Override
- public void splitToColumns( DockComponent de, int colNum)
+ public void splitToColumns( DockComponent de, int colNum )
  {
   int ind=-1;
   
@@ -209,28 +214,19 @@ public class HSplitEditor extends DockContainerEditor
   }
   
   
-  Dock rd = de.getDock();
+  int newW = de.getWidth()/colNum;
   
-  int newW = rd.getWidth()/colNum;
-  
-  rd.setName( rd.getName() );
-  rd.setWidth(newW);
+  de.setWidth(newW);
 
-  List<Dock> subDks = getDock().getSubDocks();
   
   for(int i=1; i < colNum; i++ )
   {
-   Dock nd = new Dock();
-   
-   nd.setName(getLayoutEditor().getNewDockName());
-   nd.setHeight(rd.getHeight());
-   nd.setWidth(newW);
-   nd.setType(Dock.Type.DOCK);
+   DockComponent nde = new DockComponent(getLayoutEditor(), this);
 
-   subDks.add(ind+i, nd );
-   
-   DockComponent nde = new DockComponent(getLayoutEditor(), this, nd);
-   
+   nde.setId(getLayoutEditor().getNewDockName());
+   nde.setHeight(de.getHeight());
+   nde.setWidth(newW);
+
    addChildAt(ind+i,nde);
   }
   
@@ -238,16 +234,14 @@ public class HSplitEditor extends DockContainerEditor
   
   if( panel != null )
   {
-   panel.getMember(ind).setHeight(Dock.dim2String(rd.getHeight()));
+   panel.getMember(ind).setHeight(Dock.dim2String(de.getHeight()));
    
    
    for( int j=ind+1; j < ind+colNum; j++)
    {
     DockComponent dked = (DockComponent)getSubComponents().get(j);
 
-    Dock d = dked.getDock();
-    
-    DockPanel dkp = new DockPanel(Dock.dim2String(d.getWidth()),Dock.dim2String(d.getHeight()), d, dked );
+    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),dim2String(dked.getHeight()), dked, dked );
 
     panel.addMember(dkp,j);
     dked.setPanel(dkp);
@@ -270,39 +264,28 @@ public class HSplitEditor extends DockContainerEditor
   }
   
   
-  Dock rd = de.getDock();
-  
-  rd.setName( rd.getName());
-  
-  rd.setType(Dock.Type.VSPLIT);
-  VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this, rd);
 
-  List<Dock> subDks = new ArrayList<Dock>(rowNum);
+
+  VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
 
   VLayout vl = new VLayout(1);
   vl.setHeight("100%");
   vl.setPadding(1);
-  vl.setWidth(Dock.dim2String(rd.getWidth()));
+  vl.setWidth(dim2String(de.getWidth()));
 
   contEdt.setPanel(vl);
   
   for(int i=0; i < rowNum; i++ )
   {
    Dock nd = new Dock();
+   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
    
-   nd.setName(getLayoutEditor().getNewDockName());
-   nd.setHeight(0);
-   nd.setWidth(-100);
-   nd.setType(Dock.Type.DOCK);
+   nde.setId(getLayoutEditor().getNewDockName());
+   nde.setHeight(0);
+   nde.setWidth(-100);
 
-   subDks.add( nd );
-   
-   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt, nd);
-   
    contEdt.addChild(nde);
   }
-  
-  rd.setSubDocks(subDks);
   
   getSubComponents().set(ind, contEdt);
   
@@ -321,9 +304,7 @@ public class HSplitEditor extends DockContainerEditor
    {
     DockComponent dked = (DockComponent)ed;
     
-    Dock d = dked.getDock();
-    
-    DockPanel dkp = new DockPanel(Dock.dim2String(d.getWidth()),Dock.dim2String(d.getHeight()), d, dked );
+    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),Dock.dim2String(dked.getHeight()), dked, dked );
 
     vl.addMember(dkp);
     dked.setPanel(dkp);

@@ -2,12 +2,12 @@ package com.pri.scilab.client.ui.module.layouted;
 
 
 
-public abstract class DockContainerEditor extends LayoutNodeComponent
+public abstract class DockContainerComponent extends LayoutNodeComponent
 {
 
- protected DockContainerEditor(LayoutEditor led, DockContainerEditor cn, Dock d)
+ protected DockContainerComponent(LayoutEditor led, DockContainerComponent cn)
  {
-  super(led, cn, d);
+  super(led, cn);
  }
 
  public abstract void splitToColumns( DockComponent de, int rowNum);

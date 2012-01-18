@@ -221,4 +221,37 @@ public class ActivatorTree extends VLayout
   }
 
  }
+ 
+ public boolean activateComponent( List<String> path )
+ {
+  TreeNode pNode = treeModel.getRoot();
+ 
+  for( String pEl : path )
+  {
+   TreeNode[] chldNodes = treeModel.getChildren(pNode);
+   
+   TreeNode cNode = null;
+   
+   for( TreeNode nd : chldNodes )
+   {
+    Component comp = (Component) nd.getAttributeAsObject(COMPONENT_PROP);
+    
+    if( pEl.equals(comp.getId()) )
+    {
+     cNode = nd;
+     break;
+    }
+   }
+   
+   if( cNode == null )
+    return false;
+   
+   treeModel.openFolder(cNode);
+   pNode=cNode;
+  }
+ 
+  tree.selectRecord(pNode);
+  
+  return true;
+ }
 }

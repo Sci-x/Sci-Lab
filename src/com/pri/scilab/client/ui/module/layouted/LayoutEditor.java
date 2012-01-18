@@ -24,7 +24,6 @@ public class LayoutEditor extends AbstractComponent implements Component
  
  private static final String defaultDockNamePrefix = "Dock ";
  
- private String id;
  private String icon="/images/silk/layout.png";
 
  private Layout layout;
@@ -177,7 +176,7 @@ public class LayoutEditor extends AbstractComponent implements Component
   {
    for( Dock sdk : dk.getSubDocks() )
    {
-    LayoutNodeComponent sde = createNodeComponent( sdk, (DockContainerEditor)pde );
+    LayoutNodeComponent sde = createNodeComponent( sdk, (DockContainerComponent)pde );
     
     createSubComponents(sde);
     
@@ -186,15 +185,14 @@ public class LayoutEditor extends AbstractComponent implements Component
   }
  }
  
- private LayoutNodeComponent createNodeComponent( Dock d, DockContainerEditor ce )
+ private LayoutNodeComponent createNodeComponent( Dock d, DockContainerComponent ce )
  {
   if( d.getType() == Type.HSPLIT )
-   return new HSplitEditor(this,ce,d);
+   return new HSplitEditor(this,ce);
   else if( d.getType() == Type.VSPLIT )
-   return new VSplitEditor(this, ce,d);
+   return new VSplitEditor(this, ce);
   else
-   return new DockComponent(this, ce, d);
-
+   return new DockComponent(this, ce);
  }
  
  private Canvas constructLayoutModel(LayoutNodeComponent pde)
@@ -271,7 +269,7 @@ public class LayoutEditor extends AbstractComponent implements Component
   return max;
  }
  
- class RootContainer extends DockContainerEditor
+ class RootContainer extends DockContainerComponent
  {
 
   protected RootContainer()
@@ -356,7 +354,8 @@ public class LayoutEditor extends AbstractComponent implements Component
    }
    
    LayoutEditor.this.fireChildRemoved(0, de);
-   LayoutEditor.this.fireChildInserted(0, contEdt);  }
+   LayoutEditor.this.fireChildInserted(0, contEdt);  
+  }
 
   public boolean setHeightOfChildren( int v )
   {
@@ -406,6 +405,6 @@ public class LayoutEditor extends AbstractComponent implements Component
  @Override
  public String getId()
  {
-  return id;
+  return layout.getName();
  }
 }

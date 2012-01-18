@@ -7,6 +7,8 @@ public abstract class AbstractComponent implements Component
 {
  private HierarchyListener<Component> listener;
  private List<Component> subComponents;
+ private Component parent;
+ private String id;
 
 // private Canvas pane;
  
@@ -23,6 +25,16 @@ public abstract class AbstractComponent implements Component
 // {
 //  return pane;
 // }
+ 
+ public String getId()
+ {
+  return id;
+ }
+
+ public void setId(String id)
+ {
+  this.id = id;
+ }
  
  public void addChild( Component e )
  {
@@ -107,6 +119,17 @@ public abstract class AbstractComponent implements Component
   if( listener instanceof HierarchyListenerMultiplexor<?> )
    ((HierarchyListenerMultiplexor<Component>)listener).removeListener(editorListener);
   
+ }
+
+ @Override
+ public Component getParentComponent()
+ {
+  return parent;
+ }
+
+ public void setParentComponent(Component parent)
+ {
+  this.parent = parent;
  }
 
 }

@@ -14,13 +14,13 @@ public class DockPanel extends Label //implements ActionHandler<Void>
 {
  private String widthStr, heightStr;
  
- private Dock dock;
 // private Canvas container;
 // private ActionHandler<Void> actListener;
+ private DockComponent dockComponent;
  
- public DockPanel(String wd, String ht, Dock dock, ActionHandler<Component> lsnr)
+ public DockPanel(String wd, String ht, DockComponent dockComp, ActionHandler<Component> lsnr)
  {
-  this.dock=dock;
+  dockComponent = dockComp;
 //  container=cont;
   
   setAlign(Alignment.CENTER);
@@ -61,7 +61,7 @@ public class DockPanel extends Label //implements ActionHandler<Void>
  {
   super.setWidth(w);
  
-  widthStr=Dock.dim2String(dock.getWidth());
+  widthStr=Dock.dim2String(dockComponent.getWidth());
  
   updateContent();
  }
@@ -70,14 +70,14 @@ public class DockPanel extends Label //implements ActionHandler<Void>
  {
   super.setHeight(h);
 
-  heightStr=Dock.dim2String(dock.getHeight());
+  heightStr=Dock.dim2String(dockComponent.getHeight());
   
   updateContent();
  }
  
  public void updateContent()
  {
-  setContents("Dock: "+dock.getName()+"<br>Width: "+widthStr+"<br>Height: "+heightStr);
+  setContents("Dock: "+dockComponent.getName()+"<br>Width: "+widthStr+"<br>Height: "+heightStr);
  }
  
  private int convertSizeToNumber( String szStr ) throws Exception
