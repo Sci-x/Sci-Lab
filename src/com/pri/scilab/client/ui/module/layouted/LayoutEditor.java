@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.pri.labs.client.structure.Dock;
 import com.pri.scilab.client.ui.module.activator.AbstractComponent;
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.pri.scilab.client.ui.module.activator.ComponentViewPort;
-import com.pri.scilab.client.ui.module.layouted.Dock.Type;
+import com.pri.scilab.shared.dto.Container;
+import com.pri.scilab.shared.dto.LayoutComponent;
+import com.pri.scilab.shared.dto.PageLayout;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;
@@ -26,7 +29,7 @@ public class LayoutEditor extends AbstractComponent implements Component
  
  private String icon="/images/silk/layout.png";
 
- private Layout layout;
+ private PageLayout layout;
  private ComponentViewPort cPane;
  
  private int maxDockPostfx; 
@@ -34,10 +37,10 @@ public class LayoutEditor extends AbstractComponent implements Component
  
  public LayoutEditor( String nm )
  {
-  this( new Layout( nm ) );
+  this( new PageLayout( nm ) );
  }
 
- public LayoutEditor(Layout lt)
+ public LayoutEditor(PageLayout lt)
  {
   super();
   
@@ -45,7 +48,7 @@ public class LayoutEditor extends AbstractComponent implements Component
  
   setDockEditors();
   
-  maxDockPostfx=findMaxDockNameSuffixRec(layout.getRootDock());
+  maxDockPostfx=findMaxDockNameSuffixRec(layout.getRootComponent());
  }
 
  @Override
@@ -152,12 +155,12 @@ public class LayoutEditor extends AbstractComponent implements Component
  
  private void setDockEditors()
  {
-  Dock rd = layout.getRootDock();
+  LayoutComponent rc = layout.getRootComponent();
   
-  if( rd == null )
+  if( rc == null )
    return;
   
-  LayoutNodeComponent de = createNodeComponent( rd, new RootContainer() );
+  LayoutNodeComponent de = createNodeComponent( rc, new RootContainer() );
   
   addChild(de);
   
@@ -166,6 +169,14 @@ public class LayoutEditor extends AbstractComponent implements Component
 //  subEd = new ArrayList<Editor>(1);
 //  subEd.add(de);
   
+ }
+ 
+ private LayoutNodeComponent createNodeComponent( LayoutComponent lc )
+ {
+  if( lc instanceof Container )
+  {
+   DockContainerComponent dcc = lc.new
+  }
  }
  
  private void createSubComponents( LayoutNodeComponent pde )
@@ -185,57 +196,46 @@ public class LayoutEditor extends AbstractComponent implements Component
   }
  }
  
- private LayoutNodeComponent createNodeComponent( Dock d, DockContainerComponent ce )
- {
-  if( d.getType() == Type.HSPLIT )
-   return new HSplitEditor(this,ce);
-  else if( d.getType() == Type.VSPLIT )
-   return new VSplitEditor(this, ce);
-  else
-   return new DockComponent(this, ce);
- }
+
  
  private Canvas constructLayoutModel(LayoutNodeComponent pde)
  {
-  Dock dock = pde.getDock();
-  
-  switch( dock.getType() )
+  if( pde instanceof DockComponent )
   {
-   case HSPLIT:
-   case VSPLIT:
-    com.smartgwt.client.widgets.layout.Layout vlay = dock.getType()==Type.HSPLIT?new HLayout(1):new VLayout(1);
-    vlay.setWidth(Dock.dim2String(dock.getWidth()));
-    vlay.setHeight(Dock.dim2String(dock.getHeight()));
-    
-    vlay.setPadding(1);
-    
-    pde.setPanel(vlay);
-    
-    if( pde.getSubComponents() != null && pde.getSubComponents().size() > 0 )
-    {
-     for( Component se : pde.getSubComponents() )
-      vlay.addMember( constructLayoutModel((LayoutNodeComponent)se) );
-    }
-    else
-    {
-     vlay.addMember( new DockPanel(Dock.dim2String(dock.getWidth()),Dock.dim2String(dock.getHeight()), dock, pde ));
-    }
-    
-    return vlay;
-    
-   case DOCK:
-    
-    Canvas dp = new DockPanel(Dock.dim2String(dock.getWidth()),Dock.dim2String(dock.getHeight()), dock, pde );
-    pde.setPanel(dp);
-    
-    return dp;
+   Canvas dp = new DockPanel(LayoutNodeComponent.dim2String(pde.getWidth()),LayoutNodeComponent.dim2String(pde.getHeight()), (DockComponent)pde, pde );
+   pde.setPanel(dp);
    
+   return dp;
   }
   
-  return null;
+  com.smartgwt.client.widgets.layout.Layout lay=null;
+  
+  if( pde instanceof VSplitEditor )
+   lay = new VLayout(1);
+  else if( pde instanceof HSplitEditor)
+   lay = new HLayout(1);
+
+  if( lay == null )
+   return null;
+  
+  lay.setWidth(LayoutNodeComponent.dim2String(pde.getWidth()));
+  lay.setHeight(LayoutNodeComponent.dim2String(pde.getHeight()));
+   
+  lay.setPadding(1);
+   
+  pde.setPanel(lay);
+   
+  if( pde.getSubComponents() != null && pde.getSubComponents().size() > 0 )
+  {
+   for( Component se : pde.getSubComponents() )
+    lay.addMember( constructLayoutModel((LayoutNodeComponent)se) );
+  }
+
+  
+  return lay;
  }
 
- private static int findMaxDockNameSuffixRec( Dock dk )
+ private static int findMaxDockNameSuffixRec( com.pri.scilab.shared.dto.Component dk )
  {
   int max=0;
   
@@ -255,9 +255,9 @@ public class LayoutEditor extends AbstractComponent implements Component
    }
   }
   
-  if( dk.getSubDocks() != null )
+  if( dk instanceof Container && ((Container)dk).getComponents() != null )
   {
-   for( Dock sdk : dk.getSubDocks() )
+   for( com.pri.scilab.shared.dto.Component sdk : ((Container)dk).getComponents() )
    {
     int nm = findMaxDockNameSuffixRec(sdk);
 

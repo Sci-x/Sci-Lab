@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServlet;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.pri.scilab.client.BackendService;
-import com.pri.scilab.client.ui.module.layouted.Layout;
 import com.pri.scilab.server.data.BackendDataManager;
+import com.pri.scilab.shared.dto.PageLayout;
 
 
 /**
@@ -26,7 +26,7 @@ public class BackendServiceServlet extends RemoteServiceServlet implements Backe
  }
 
  @Override
- public Collection<Layout> getLayouts()
+ public Collection<PageLayout> getLayouts()
  {
   return BackendDataManager.getInstance().getLayouts();
  }

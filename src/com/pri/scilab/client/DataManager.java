@@ -3,7 +3,7 @@ package com.pri.scilab.client;
 import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.pri.scilab.client.ui.module.layouted.Layout;
+import com.pri.scilab.shared.dto.PageLayout;
 import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.util.SC;
 
@@ -17,7 +17,7 @@ public class DataManager
   return instance;
  }
  
- private Collection<Layout> layouts;
+ private Collection<PageLayout> layouts;
  
  
  private DataManager()
@@ -27,11 +27,11 @@ public class DataManager
  
  public void init( final AsyncCallback<Void> cb )
  {
-  async.getLayouts(new AsyncCallback<Collection<Layout>>()
+  async.getLayouts(new AsyncCallback<Collection<PageLayout>>()
   {
    
    @Override
-   public void onSuccess(Collection<Layout> arg0)
+   public void onSuccess(Collection<PageLayout> arg0)
    {
     layouts=arg0;
     
@@ -52,7 +52,7 @@ public class DataManager
   });
  }
  
- public Collection<Layout> getLayouts()
+ public Collection<PageLayout> getLayouts()
  {
   return layouts;
  }

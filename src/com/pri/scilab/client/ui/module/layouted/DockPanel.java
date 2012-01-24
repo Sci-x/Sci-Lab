@@ -6,7 +6,6 @@ import com.pri.scilab.client.ui.module.activator.ActionMenu;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
-import com.smartgwt.client.util.BooleanCallback;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.VLayout;
 
@@ -61,7 +60,7 @@ public class DockPanel extends Label //implements ActionHandler<Void>
  {
   super.setWidth(w);
  
-  widthStr=Dock.dim2String(dockComponent.getWidth());
+  widthStr=LayoutNodeComponent.dim2String(dockComponent.getWidth());
  
   updateContent();
  }
@@ -70,7 +69,7 @@ public class DockPanel extends Label //implements ActionHandler<Void>
  {
   super.setHeight(h);
 
-  heightStr=Dock.dim2String(dockComponent.getHeight());
+  heightStr=LayoutNodeComponent.dim2String(dockComponent.getHeight());
   
   updateContent();
  }
@@ -80,39 +79,39 @@ public class DockPanel extends Label //implements ActionHandler<Void>
   setContents("Dock: "+dockComponent.getName()+"<br>Width: "+widthStr+"<br>Height: "+heightStr);
  }
  
- private int convertSizeToNumber( String szStr ) throws Exception
- {
-  szStr = szStr.trim();
-  
-  if( szStr.matches("\\d+") )
-  {
-   return Integer.parseInt(szStr);
-  }
-  else if( szStr.matches("\\d+%") )
-  {
-   return - Integer.parseInt(szStr.substring(0,szStr.length()-1));
-  }
-  else if( "*".equals(szStr) )
-   return 0;
-  
-  throw new Exception("Invalid input string");
- }
- 
- private static class MessageCB implements BooleanCallback
- {
-  private static MessageCB instance = new MessageCB();
-
-  private static MessageCB getInstance()
-  {
-   return instance;
-  }
-  
-  @Override
-  public void execute(Boolean value)
-  {
-  }
-  
- }
+// private int convertSizeToNumber( String szStr ) throws Exception
+// {
+//  szStr = szStr.trim();
+//  
+//  if( szStr.matches("\\d+") )
+//  {
+//   return Integer.parseInt(szStr);
+//  }
+//  else if( szStr.matches("\\d+%") )
+//  {
+//   return - Integer.parseInt(szStr.substring(0,szStr.length()-1));
+//  }
+//  else if( "*".equals(szStr) )
+//   return 0;
+//  
+//  throw new Exception("Invalid input string");
+// }
+// 
+// private static class MessageCB implements BooleanCallback
+// {
+//  private static MessageCB instance = new MessageCB();
+//
+//  private static MessageCB getInstance()
+//  {
+//   return instance;
+//  }
+//  
+//  @Override
+//  public void execute(Boolean value)
+//  {
+//  }
+//  
+// }
 
 
 // private static int findMaxDockNameSuffix( Dock dk )

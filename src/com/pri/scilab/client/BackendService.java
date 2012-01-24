@@ -5,12 +5,12 @@ import java.util.Collection;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.pri.scilab.client.ui.module.layouted.Layout;
+import com.pri.scilab.shared.dto.PageLayout;
 
 public interface BackendService extends RemoteService
 {
  
- Collection<Layout> getLayouts();
+ Collection<PageLayout> getLayouts();
  
  
  public static final String SERVICE_URI = "Service";

@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.Collection;
 
-import com.pri.scilab.client.ui.module.layouted.Layout;
+import com.pri.scilab.shared.dto.PageLayout;
 
 
 public class BackendDataManager
@@ -28,7 +28,7 @@ public class BackendDataManager
  
 
  @SuppressWarnings("unchecked")
- public Collection<Layout> getLayouts()
+ public Collection<PageLayout> getLayouts()
  {
   FileInputStream serFile = null;
   try
@@ -37,7 +37,7 @@ public class BackendDataManager
    
    ObjectInputStream ois = new ObjectInputStream( serFile = new FileInputStream(laySer) );
    
-   return (Collection<Layout>) ois.readObject();
+   return (Collection<PageLayout>) ois.readObject();
    
   }
   catch (Exception e)

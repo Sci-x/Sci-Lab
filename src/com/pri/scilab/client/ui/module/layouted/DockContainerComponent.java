@@ -4,6 +4,11 @@ package com.pri.scilab.client.ui.module.layouted;
 
 public abstract class DockContainerComponent extends LayoutNodeComponent
 {
+// public enum Type
+// {
+//  VERTICAL,
+//  HORIZONTAL
+// }
 
  protected DockContainerComponent(LayoutEditor led, DockContainerComponent cn)
  {

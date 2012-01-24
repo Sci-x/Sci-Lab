@@ -1,6 +1,9 @@
 package com.pri.scilab.shared.dto;
 
-public interface Component
+
+public class VSplit extends Split
 {
+
+
 
 }
