@@ -1,44 +1,23 @@
 package com.pri.scilab.shared.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Split implements LayoutComponent
+public class Split extends LayoutComponent
 {
- private String name;
- private int width;
- private int height;
+ private List<LayoutComponent> content = new ArrayList<LayoutComponent>();
  
- private List<LayoutComponent> content;
- 
- @Override
- public String getName()
- {
-  return name;
- }
 
  public List<LayoutComponent> getComponents()
  {
   return content;
  }
 
- public int getWidth()
+
+ public void addChildComponent(LayoutComponent nc)
  {
-  return width;
+  content.add(nc);
  }
 
- public void setWidth(int width)
- {
-  this.width = width;
- }
-
- public int getHeight()
- {
-  return height;
- }
-
- public void setHeight(int height)
- {
-  this.height = height;
- }
 
 }

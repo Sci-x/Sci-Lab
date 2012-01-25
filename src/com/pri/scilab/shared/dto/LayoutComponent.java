@@ -1,11 +1,30 @@
 package com.pri.scilab.shared.dto;
 
-public interface LayoutComponent
+public class LayoutComponent
 {
 
- String getName();
- 
- int getWidth();
- int getHeight();
+ private String name;
+ private int width;
+ private int height;
+
+ public String getName()
+ {
+  return name;
+ }
+
+ public void setName(String name)
+ {
+  this.name = name;
+ }
+
+ public int getWidth()
+ {
+  return width;
+ }
+
+ public int getHeight()
+ {
+  return height;
+ }
 
 }

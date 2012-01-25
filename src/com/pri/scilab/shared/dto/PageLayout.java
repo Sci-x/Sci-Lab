@@ -9,6 +9,9 @@ public class PageLayout
  public PageLayout(String nm)
  {
   name = nm;
+  rootComponent = new Dock();
+  
+  rootComponent.setName("Page Dock");
  }
 
 
