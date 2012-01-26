@@ -1,8 +1,7 @@
 package com.pri.scilab.client.ui.module.layouted;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -58,14 +57,7 @@ public class LayoutEditor extends DockContainerComponent implements Component
  {
   Action res = new Action();
 
-  res.setSubActions(
-
-  new Action[] 
-   { 
-    new Action("Rename", Actions.RENAME.name(), "/images/silk/anchor.png", null),
-   }
-
-  );
+  res.setSubActions( Collections.singletonList(new Action("Rename", Actions.RENAME.name(), "/images/silk/anchor.png", null)) );
 
   return res;
  }
@@ -272,6 +264,7 @@ public class LayoutEditor extends DockContainerComponent implements Component
   return max;
  }
  
+/* 
  class RootContainer extends DockContainerComponent
  {
 
@@ -405,9 +398,163 @@ public class LayoutEditor extends DockContainerComponent implements Component
   
  }
 
+ */
+ 
  @Override
  public String getId()
  {
   return layout.getName();
+ }
+
+ @Override
+ public void splitToColumns( DockComponent de, int rowNum )
+ {
+  int ind=-1;
+  
+  for( Component ed : getSubComponents() )
+  {
+   ind++;
+   
+   if( ed == de )
+    break;
+  }
+  
+  
+  HSplitEditor contEdt = new HSplitEditor(getLayoutEditor(), this);
+
+  HLayout hl = new HLayout(1);
+  hl.setWidth("100%");
+  hl.setPadding(1);
+  hl.setHeight(dim2String(de.getHeight()));
+
+  contEdt.setPanel(hl);
+  
+  for(int i=0; i < rowNum; i++ )
+  {
+   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
+   
+   nde.setId(getLayoutEditor().getNewDockName());
+   nde.setHeight(-100);
+   nde.setWidth(0);
+
+   contEdt.addChild(nde);
+  }
+  
+  replaceChild( ind, contEdt );
+  
+  VLayout panel = (VLayout)getPanel();
+  
+  if( panel != null )
+  {
+   panel.removeMember(panel.getMember(ind));
+   
+   panel.addMember(hl,ind);
+   
+//   if( ( getSubEditors().size()-1 ) != ind )
+//    panel.reorderMember(getSubEditors().size()-1, ind);
+   
+   for( Component ed : contEdt.getSubComponents())
+   {
+    DockComponent dked = (DockComponent)ed;
+    
+    
+    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),dim2String(dked.getHeight()), dked, dked );
+
+    hl.addMember(dkp);
+    dked.setPanel(dkp);
+   }
+  }
+  
+//  fireChildRemoved(ind, de);
+//  fireChildInserted(ind, contEdt);
+ }
+
+ @Override
+ public void splitToRows( DockComponent de, int rowNum )
+ {
+  int ind=-1;
+  
+  for( Component ed : getSubComponents() )
+  {
+   ind++;
+   
+   if( ed == de )
+    break;
+  }
+  
+
+  VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
+
+  VLayout vl = new VLayout(1);
+  vl.setHeight("100%");
+  vl.setPadding(1);
+  vl.setWidth(dim2String(de.getWidth()));
+
+  contEdt.setPanel(vl);
+  
+  for(int i=0; i < rowNum; i++ )
+  {
+   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
+   
+   nde.setId(getLayoutEditor().getNewDockName());
+   nde.setHeight(0);
+   nde.setWidth(-100);
+
+   contEdt.addChild(nde);
+  }
+  
+  replaceChild( ind, contEdt );
+  
+//  getSubComponents().set(ind, contEdt);
+  
+  HLayout panel = (HLayout)getPanel();
+  
+  if( panel != null )
+  {
+   panel.removeMember(panel.getMember(ind));
+   
+   panel.addMember(vl,ind);
+   
+//   if( ( getSubEditors().size()-1 ) != ind )
+//    panel.reorderMember(getSubEditors().size()-1, ind);
+   
+   for( Component ed : contEdt.getSubComponents())
+   {
+    DockComponent dked = (DockComponent)ed;
+    
+    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),dim2String(dked.getHeight()), dked, dked );
+
+    vl.addMember(dkp);
+    dked.setPanel(dkp);
+   }
+  }
+  
+//  fireChildRemoved(ind, de);
+//  fireChildInserted(ind, contEdt);
+ }
+
+
+ @Override
+ public boolean setHeightOfChildren(int value)
+ {
+  return false;
+ }
+
+ @Override
+ public boolean setWidthOfChildren(int value)
+ {
+  return false;
+ }
+
+ @Override
+ public boolean canSetChildWidth()
+ {
+  return false;
+ }
+
+ @Override
+ public boolean canSetChildHeight()
+ {
+  return false;
  }
 }

@@ -56,12 +56,26 @@ public abstract class AbstractComponent implements Component
   fireChildInserted(ind, e);
  }
 
+ public void replaceChild(int index, Component e )
+ {
+  subComponents.set(index,e);
+  
+  fireChildReplaced(index,e);
+ }
+ 
  
  @Override
  public List<Component> getSubComponents()
  {
   return subComponents;
  }
+ 
+ protected void fireChildReplaced(int idx, Component chld)
+ {
+  if( listener != null )
+   listener.childReplaced(idx, chld);
+ }
+
  
  protected void fireChildInserted(int idx, Component chld)
  {

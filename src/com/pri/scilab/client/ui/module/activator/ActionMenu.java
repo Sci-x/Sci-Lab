@@ -1,6 +1,8 @@
 package com.pri.scilab.client.ui.module.activator;
 
 
+import java.util.List;
+
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.menu.MenuItemSeparator;
@@ -25,7 +27,7 @@ public class ActionMenu<T> extends Menu implements ItemClickHandler
   createMenu(this, act.getSubActions() );
  }
  
- private void createMenu( Menu mnu, Action[] acts )
+ private void createMenu( Menu mnu, List<Action> acts )
  {
   for(Action act : acts)
   {

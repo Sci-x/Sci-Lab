@@ -1,5 +1,7 @@
 package com.pri.scilab.client.ui;
 
+import java.util.ArrayList;
+
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.ActivatorTree;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -33,14 +35,8 @@ public class AdminPanel extends HLayout
  {
   Action res = new Action();
   
-  res.setSubActions(
+  res.setSubActions( new ArrayList<Action>() {{ add(new Action("New Layout","new","/images/silk/accept.png",null)); }} );
 
-    new Action[]
-               {
-      new Action("New Layout","new","/images/silk/accept.png",null),
-               }
-  
-  );
   
   return res;
  }

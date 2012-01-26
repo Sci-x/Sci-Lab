@@ -32,7 +32,7 @@ public class DockPanel extends Label //implements ActionHandler<Void>
   setWidth(wd);
   setHeight(ht);
   
-  setContextMenu(new ActionMenu<Component>( DockComponent.getDockEditorAction(), null, lsnr ) );
+  setContextMenu(new ActionMenu<Component>( dockComp.getAction(), null, lsnr ) );
 //  widthStr = wd;
 //  heightStr = ht;
  }

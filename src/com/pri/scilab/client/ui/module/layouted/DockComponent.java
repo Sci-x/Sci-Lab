@@ -1,6 +1,8 @@
 package com.pri.scilab.client.ui.module.layouted;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -19,16 +21,21 @@ public class DockComponent extends LayoutNodeComponent
   SET_H,
   REMOVE
  }
+ private static Action splt2ColAct = new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null);
+ private static Action splt2RowAct = new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null);
+ private static Action setWidthAct = new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null);
+ private static Action setHeightAct = new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null);
+ private static Action remAct = new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null);
 
  
- private static Action  actins = new Action(null,null,null, new Action[]{
-   new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null),
-   new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null),
-   new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null),
-   new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null),
-   new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null),
-   
- });
+// private static Action  actins = new Action(null,null,null, new Action[]{
+//   new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null),
+//   new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null),
+//   new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null),
+//   new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null),
+//   new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null),
+//   
+// });
  
  private String id; 
 
@@ -60,16 +67,29 @@ public class DockComponent extends LayoutNodeComponent
   getLayoutEditor().deactivate();
  }
 
- public static Action getDockEditorAction()
- {
-  return actins;
- }
+// public static Action getDockEditorAction()
+// {
+//  return actins;
+// }
 
  
  @Override
  public Action getAction()
  {
-  return actins;
+  List<Action> subAc = new ArrayList<Action>(5);
+  
+  subAc.add(splt2ColAct);
+  subAc.add(splt2RowAct);
+  
+  if( getContainer().canSetChildWidth() )
+   subAc.add(setWidthAct);
+
+  if( getContainer().canSetChildHeight() )
+   subAc.add(setHeightAct);
+  
+  subAc.add(remAct);
+ 
+  return new Action(null,null,null,subAc);
  }
 
  @Override

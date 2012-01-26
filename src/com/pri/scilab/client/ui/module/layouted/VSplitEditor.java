@@ -1,6 +1,8 @@
 package com.pri.scilab.client.ui.module.layouted;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -13,24 +15,8 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class VSplitEditor extends DockContainerComponent
 {
- public enum Actions
- {
-  ADD_ROWS,
-  SET_W,
-  SET_H,
-  REMOVE
- }
 
- 
- private static Action  actins = new Action(null,null,null, new Action[]{
-   new Action("Add rows",Actions.ADD_ROWS.name(),"/images/silk/application_vsplit_add.png",null),
-   new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null),
-   new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null),
-   new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null),
-   
- });
- 
- 
+
  public VSplitEditor( LayoutEditor led, DockContainerComponent cn)
  {
   super(led, cn);
@@ -62,7 +48,19 @@ public class VSplitEditor extends DockContainerComponent
  @Override
  public Action getAction()
  {
-  return actins;
+  List<Action> subAc = new ArrayList<Action>(5);
+  
+  subAc.add(addRowAct);
+  
+  if( getContainer().canSetChildWidth() )
+   subAc.add(setWidthAct);
+
+  if( getContainer().canSetChildHeight() )
+   subAc.add(setHeightAct);
+  
+  subAc.add(remAct);
+ 
+  return new Action(null,null,null,subAc);
  }
 
  @Override
@@ -132,7 +130,7 @@ public class VSplitEditor extends DockContainerComponent
   super.setWidth(wd);
   
   if( getPanel() != null )
-   getPanel().setWidth( Dock.dim2String(wd) );
+   getPanel().setWidth( dim2String(wd) );
  }
  
  private void askAndAddRows()
@@ -225,7 +223,7 @@ public class VSplitEditor extends DockContainerComponent
    contEdt.addChild(nde);
   }
   
-  getSubComponents().set(ind, contEdt);
+  replaceChild( ind, contEdt );
   
   VLayout panel = (VLayout)getPanel();
   
@@ -250,8 +248,8 @@ public class VSplitEditor extends DockContainerComponent
    }
   }
   
-  fireChildRemoved(ind, de);
-  fireChildInserted(ind, contEdt);
+//  fireChildRemoved(ind, de);
+//  fireChildInserted(ind, contEdt);
  }
 
  @Override
@@ -307,6 +305,18 @@ public class VSplitEditor extends DockContainerComponent
  // fireChildRemoved(ind, de);
  // fireChildInserted(ind, contEdt);
   
+ }
+
+ @Override
+ public boolean canSetChildWidth()
+ {
+  return getSubComponents().size() > 0;
+ }
+
+ @Override
+ public boolean canSetChildHeight()
+ {
+  return getContainer().canSetChildHeight();
  }
 
 }

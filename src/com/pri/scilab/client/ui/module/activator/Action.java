@@ -1,12 +1,15 @@
 package com.pri.scilab.client.ui.module.activator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Action
 {
  private String   text;
  private String   action;
  private String   cls;
- private Action[] subActions;
+ private List<Action> subActions;
 
  public Action()
  {}
@@ -16,7 +19,7 @@ public class Action
   this(text, action, null, null);
  }
  
- public Action(String text, String action, String cls, Action[] subActions)
+ public Action(String text, String action, String cls, List<Action> subActions)
  {
   super();
   this.text = text;
@@ -55,12 +58,12 @@ public class Action
   this.cls = cls;
  }
 
- public Action[] getSubActions()
+ public List<Action> getSubActions()
  {
   return subActions;
  }
 
- public void setSubActions(Action[] subActions)
+ public void setSubActions(List<Action> subActions)
  {
   this.subActions = subActions;
  }
@@ -80,10 +83,10 @@ public class Action
   
   if( orAc.subActions != null )
   {
-   newAc.subActions = new Action[orAc.subActions.length];
+   newAc.subActions = new ArrayList<Action>(orAc.subActions.size());
    
-   for( int i=0; i < orAc.subActions.length; i++ )
-    newAc.subActions[i]=copyAction(orAc.subActions[i]);
+   for( int i=0; i < orAc.subActions.size(); i++ )
+    newAc.subActions.add(copyAction(orAc.subActions.get(i)));
   }
   
   return newAc;

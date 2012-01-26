@@ -166,6 +166,35 @@ public class ActivatorTree extends VLayout
   return myNode;
  }
  
+ private static void attachComponent( TreeNode myNode, Component comp )
+ {
+  TreeNode[] subedNodes= null;
+  
+  List<Component> subed = comp.getSubComponents();
+  
+  if( subed != null )
+  {
+   subedNodes = new TreeNode[subed.size()];
+   
+   int i=0;
+   for( Component ied : subed )
+   {
+    subedNodes[i] = new TreeNode();
+    
+    attachComponent(subedNodes[i], ied);
+    
+    i++;
+   }
+  }
+
+  
+  myNode.setTitle(comp.getName());
+  myNode.setAttribute(NAME_PROP, comp.getName());
+  myNode.setAttribute(CHILDREN_PROP, subedNodes);
+  myNode.setAttribute(COMPONENT_PROP, comp);
+  myNode.setAttribute(ICON_PROP, comp.getIcon());
+ }
+
  
  class ComponentListener implements HierarchyListener<Component>
  {
@@ -220,6 +249,16 @@ public class ActivatorTree extends VLayout
    tree.redraw();
   }
 
+
+  @Override
+  public void childReplaced(int idx, Component chld)
+  {
+   attachComponent(treeModel.getChildren(treeNode)[idx], chld);
+
+   tree.redraw();
+  }
+
+  
  }
  
  public boolean activateComponent( List<String> path )

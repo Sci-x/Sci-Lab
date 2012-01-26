@@ -9,6 +9,7 @@ import com.pri.scilab.client.ui.module.activator.AbstractComponent;
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.pri.scilab.client.ui.module.activator.ComponentViewPort;
+import com.pri.scilab.shared.dto.PageLayout;
 
 public class LayoutsEditor extends AbstractComponent implements Component
 {
@@ -23,11 +24,11 @@ public class LayoutsEditor extends AbstractComponent implements Component
  {
   super();
   
-  Collection<Layout> lts = DataManager.getInstance().getLayouts();
+  Collection<PageLayout> lts = DataManager.getInstance().getLayouts();
   
   if( lts != null )
   {
-   for( Layout lt : lts )
+   for( PageLayout lt : lts )
    {
     LayoutEditor lay = new LayoutEditor(lt);
 

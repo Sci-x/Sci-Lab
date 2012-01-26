@@ -1,6 +1,8 @@
 package com.pri.scilab.client.ui.module.layouted;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
@@ -15,24 +17,9 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class HSplitEditor extends DockContainerComponent
 {
- public enum Actions
- {
-  ADD_COLS,
-  SET_W,
-  SET_H,
-  REMOVE
- }
 
- 
- private static Action  actins = new Action(null,null,null, new Action[]{
-   new Action("Add columns",Actions.ADD_COLS.name(),"/images/silk/application_hsplit_add.png",null),
-   new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null),
-   new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null),
-   new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null),
-   
- });
- 
- 
+
+
  public HSplitEditor( LayoutEditor led, DockContainerComponent cn)
  {
   super(led, cn);
@@ -62,7 +49,19 @@ public class HSplitEditor extends DockContainerComponent
  @Override
  public Action getAction()
  {
-  return actins;
+  List<Action> subAc = new ArrayList<Action>(5);
+  
+  subAc.add(addColAct);
+  
+  if( getContainer().canSetChildWidth() )
+   subAc.add(setWidthAct);
+
+  if( getContainer().canSetChildHeight() )
+   subAc.add(setHeightAct);
+  
+  subAc.add(remAct);
+ 
+  return new Action(null,null,null,subAc);
  }
 
  @Override
@@ -177,7 +176,7 @@ public class HSplitEditor extends DockContainerComponent
   super.setHeight(v);
   
   if( getPanel() != null )
-   getPanel().setHeight( Dock.dim2String(v) );
+   getPanel().setHeight( dim2String(v) );
  }
  
  public boolean setHeightOfChildren( int value )
@@ -234,7 +233,7 @@ public class HSplitEditor extends DockContainerComponent
   
   if( panel != null )
   {
-   panel.getMember(ind).setHeight(Dock.dim2String(de.getHeight()));
+   panel.getMember(ind).setHeight(LayoutNodeComponent.dim2String(de.getHeight()));
    
    
    for( int j=ind+1; j < ind+colNum; j++)
@@ -263,8 +262,6 @@ public class HSplitEditor extends DockContainerComponent
     break;
   }
   
-  
-
 
   VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
 
@@ -277,7 +274,6 @@ public class HSplitEditor extends DockContainerComponent
   
   for(int i=0; i < rowNum; i++ )
   {
-   Dock nd = new Dock();
    DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
    
    nde.setId(getLayoutEditor().getNewDockName());
@@ -287,7 +283,9 @@ public class HSplitEditor extends DockContainerComponent
    contEdt.addChild(nde);
   }
   
-  getSubComponents().set(ind, contEdt);
+  replaceChild( ind, contEdt );
+  
+//  getSubComponents().set(ind, contEdt);
   
   HLayout panel = (HLayout)getPanel();
   
@@ -304,15 +302,27 @@ public class HSplitEditor extends DockContainerComponent
    {
     DockComponent dked = (DockComponent)ed;
     
-    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),Dock.dim2String(dked.getHeight()), dked, dked );
+    DockPanel dkp = new DockPanel(dim2String(dked.getWidth()),dim2String(dked.getHeight()), dked, dked );
 
     vl.addMember(dkp);
     dked.setPanel(dkp);
    }
   }
   
-  fireChildRemoved(ind, de);
-  fireChildInserted(ind, contEdt);
+//  fireChildRemoved(ind, de);
+//  fireChildInserted(ind, contEdt);
+ }
+
+ @Override
+ public boolean canSetChildWidth()
+ {
+  return getSubComponents().size() > 0;
+ }
+
+ @Override
+ public boolean canSetChildHeight()
+ {
+  return getContainer().canSetChildHeight();
  }
 
 }
