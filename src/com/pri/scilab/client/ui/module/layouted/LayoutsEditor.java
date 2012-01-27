@@ -46,22 +46,22 @@ public class LayoutsEditor extends AbstractComponent implements Component
 
   res.setSubActions(
 
-  new Action[] 
-   { 
-    new Action("New Layout", Actions.NEW.name(), "/images/silk/add.png", null),
-    new Action("New Layout", Actions.NEW.name(), "/images/silk/anchor.png", null),
-    new Action(null, null),
-    new Action("New Layout", Actions.NEW.name(), "/images/silk/application.png", null),
-    new Action("Sub", Actions.NEW.name(), "/images/silk/add.png",   new Action[] 
-                                                                               { 
-     new Action("New Layout", Actions.NEW.name(), "/images/silk/add.png", null),
-     new Action("New Layout", Actions.NEW.name(), "/images/silk/anchor.png", null),
-     new Action(null, null),
-     new Action("New Layout", Actions.NEW.name(), "/images/silk/application.png", null),
-     new Action("Sub", Actions.NEW.name(), "/images/silk/add.png", null ),
-    }
- ),
-   }
+   new ArrayList<Action>() 
+  {{
+    add(new Action("New Layout", Actions.NEW.name(), "/images/silk/add.png", null));
+    add(new Action("New Layout", Actions.NEW.name(), "/images/silk/anchor.png", null));
+    add(new Action(null, null));
+    add(new Action("New Layout", Actions.NEW.name(), "/images/silk/application.png", null));
+    add(new Action("Sub", Actions.NEW.name(), "/images/silk/add.png", new ArrayList<Action>()
+    {{
+      add(new Action("New Layout", Actions.NEW.name(), "/images/silk/add.png", null));
+      add(new Action("New Layout", Actions.NEW.name(), "/images/silk/anchor.png", null));
+      add(new Action(null, null));
+      add(new Action("New Layout", Actions.NEW.name(), "/images/silk/application.png", null));
+      add(new Action("Sub", Actions.NEW.name(), "/images/silk/add.png", null));
+    }}
+     ));
+   }}
 
   );
 

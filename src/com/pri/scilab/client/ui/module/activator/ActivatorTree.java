@@ -18,7 +18,7 @@ import com.smartgwt.client.widgets.tree.events.NodeContextClickHandler;
 public class ActivatorTree extends VLayout
 {
  static final String NAME_PROP="name";
- static final String CHILDREN_PROP="children";
+// static final String CHILDREN_PROP="children";
  static final String COMPONENT_PROP="component";
  static final String ICON_PROP="icon";
  
@@ -31,20 +31,33 @@ public class ActivatorTree extends VLayout
  {
   treeModel.setModelType(TreeModelType.CHILDREN);  
   treeModel.setNameProperty(NAME_PROP);
-  treeModel.setChildrenProperty(CHILDREN_PROP);
+//  treeModel.setChildrenProperty(CHILDREN_PROP);
 
-  TreeNode[] nodes = new TreeNode[editors.length];
-  
-  
-  for( int i=0; i < editors.length; i++ )
-   nodes[i] = createComponentNode(editors[i]);
-  
   TreeNode rootNode = new TreeNode();
   
-  rootNode.setAttribute(CHILDREN_PROP, nodes);
-  
   treeModel.setRoot( rootNode );
-       
+
+  for( int i=0; i < editors.length; i++ )
+  {
+   TreeNode cn = new TreeNode();
+   
+   treeModel.add(cn, rootNode);
+
+   attachComponent(cn, editors[i]);
+  }
+  
+//  TreeNode[] nodes = new TreeNode[editors.length];
+//  
+//  
+//  for( int i=0; i < editors.length; i++ )
+//   nodes[i] = createComponentNode(editors[i]);
+  
+//  TreeNode rootNode = new TreeNode();
+  
+//  rootNode.setAttribute(CHILDREN_PROP, nodes);
+  
+//  treeModel.setRoot( rootNode );
+  
   tree.setShowHeader(false);
   tree.setData(treeModel);
   tree.setShowConnectors(true);
@@ -138,35 +151,35 @@ public class ActivatorTree extends VLayout
   addMember(tree);
  }
  
- private TreeNode createComponentNode( Component ed )
- {
-  TreeNode[] subedNodes= null;
-  
-  List<Component> subed = ed.getSubComponents();
-  
-  if( subed != null )
-  {
-   subedNodes = new TreeNode[subed.size()];
-   
-   int i=0;
-   for( Component ied : subed )
-    subedNodes[i++] = createComponentNode(ied);
-  }
-  
-  TreeNode myNode = new TreeNode();
-     
-  myNode.setTitle(ed.getName());
-  myNode.setAttribute(NAME_PROP, ed.getName());
-  myNode.setAttribute(CHILDREN_PROP, subedNodes);
-  myNode.setAttribute(COMPONENT_PROP, ed);
-  myNode.setAttribute(ICON_PROP, ed.getIcon());
-  
-  ed.addHierarchyListener(new ComponentListener(myNode));
-  
-  return myNode;
- }
+// private TreeNode createComponentNode( Component ed )
+// {
+//  TreeNode[] subedNodes= null;
+//  
+//  List<Component> subed = ed.getSubComponents();
+//  
+//  if( subed != null )
+//  {
+//   subedNodes = new TreeNode[subed.size()];
+//   
+//   int i=0;
+//   for( Component ied : subed )
+//    subedNodes[i++] = createComponentNode(ied);
+//  }
+//  
+//  TreeNode myNode = new TreeNode();
+//     
+//  myNode.setTitle(ed.getName());
+//  myNode.setAttribute(NAME_PROP, ed.getName());
+//  myNode.setAttribute(CHILDREN_PROP, subedNodes);
+//  myNode.setAttribute(COMPONENT_PROP, ed);
+//  myNode.setAttribute(ICON_PROP, ed.getIcon());
+//  
+//  ed.addHierarchyListener(new ComponentListener(myNode));
+//  
+//  return myNode;
+// }
  
- private static void attachComponent( TreeNode myNode, Component comp )
+ private void attachComponent( TreeNode myNode, Component comp )
  {
   TreeNode[] subedNodes= null;
   
@@ -176,10 +189,14 @@ public class ActivatorTree extends VLayout
   {
    subedNodes = new TreeNode[subed.size()];
    
+//   treeModel.addList(subedNodes, myNode);
+
    int i=0;
    for( Component ied : subed )
    {
     subedNodes[i] = new TreeNode();
+    
+    treeModel.add(subedNodes[i], myNode);
     
     attachComponent(subedNodes[i], ied);
     
@@ -190,9 +207,12 @@ public class ActivatorTree extends VLayout
   
   myNode.setTitle(comp.getName());
   myNode.setAttribute(NAME_PROP, comp.getName());
-  myNode.setAttribute(CHILDREN_PROP, subedNodes);
+//  myNode.setAttribute(CHILDREN_PROP, subedNodes);
   myNode.setAttribute(COMPONENT_PROP, comp);
   myNode.setAttribute(ICON_PROP, comp.getIcon());
+  
+  comp.addHierarchyListener(new ComponentListener(myNode));
+
  }
 
  
@@ -209,12 +229,14 @@ public class ActivatorTree extends VLayout
   @Override
   public void childInserted(int idx, Component chld)
   {
-   TreeNode nNd = createComponentNode(chld);
+   TreeNode nNd = new TreeNode();
    
    treeModel.add(nNd, treeNode, idx);
    
-   for( TreeNode n : treeModel.getChildren(treeNode) )
-     System.out.println( n.getClass().getName());
+   attachComponent(nNd, chld);
+   
+//   for( TreeNode n : treeModel.getChildren(treeNode) )
+//     System.out.println( n.getClass().getName());
 //   chld.addHierarchyListener( new EditorListener(nNd) );
   }
 

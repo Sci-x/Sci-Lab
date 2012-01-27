@@ -1,6 +1,10 @@
 package com.pri.scilab.shared.dto;
 
-public class LayoutComponent
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class LayoutComponent implements Serializable, IsSerializable
 {
 
  private String name;
@@ -25,6 +29,16 @@ public class LayoutComponent
  public int getHeight()
  {
   return height;
+ }
+
+ public void setWidth(int width)
+ {
+  this.width = width;
+ }
+
+ public void setHeight(int height)
+ {
+  this.height = height;
  }
 
 }

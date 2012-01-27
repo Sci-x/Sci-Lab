@@ -264,6 +264,8 @@ public class HSplitEditor extends DockContainerComponent
   
 
   VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
+  
+  contEdt.setId( getLayoutEditor().getNewVSplitName() );
 
   VLayout vl = new VLayout(1);
   vl.setHeight("100%");

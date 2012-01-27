@@ -204,6 +204,7 @@ public class VSplitEditor extends DockContainerComponent
   
   
   HSplitEditor contEdt = new HSplitEditor(getLayoutEditor(), this);
+  contEdt.setId( getLayoutEditor().getNewHSplitName() );
 
   HLayout hl = new HLayout(1);
   hl.setWidth("100%");
@@ -308,15 +309,15 @@ public class VSplitEditor extends DockContainerComponent
  }
 
  @Override
- public boolean canSetChildWidth()
+ public boolean canSetChildHeight()
  {
   return getSubComponents().size() > 0;
  }
 
  @Override
- public boolean canSetChildHeight()
+ public boolean canSetChildWidth()
  {
-  return getContainer().canSetChildHeight();
+  return getContainer().canSetChildWidth();
  }
 
 }

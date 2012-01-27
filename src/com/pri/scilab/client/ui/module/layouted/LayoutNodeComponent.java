@@ -20,6 +20,8 @@ public abstract class LayoutNodeComponent extends AbstractComponent
   layEd=led;
 //  dock=d;
   setParentComponent(cn);
+  
+  addHierarchyListener(led);
  }
  
 // public Dock getDock()

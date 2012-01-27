@@ -1,5 +1,7 @@
 package com.pri.scilab.shared.dto;
 
-public class Dock extends LayoutComponent
+import java.io.Serializable;
+
+public class Dock extends LayoutComponent implements Serializable
 {
 }

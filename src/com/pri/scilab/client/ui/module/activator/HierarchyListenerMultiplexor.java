@@ -39,7 +39,7 @@ public class HierarchyListenerMultiplexor<T> implements HierarchyListener<T>
  }
 
  @Override
- public void childReplaced(int idx, Component chld)
+ public void childReplaced(int idx, T chld)
  {
   for( HierarchyListener<T> lsn : listeners )
    lsn.childReplaced(idx, chld);

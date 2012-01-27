@@ -1,8 +1,5 @@
 package com.pri.scilab.client.ui.module.layouted;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.pri.scilab.client.ui.module.activator.Action;
 
 
@@ -25,7 +22,7 @@ public abstract class DockContainerComponent extends LayoutNodeComponent
  protected static Action remAct = new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null);
 
  
- private List<LayoutNodeComponent> children = new ArrayList<LayoutNodeComponent>();
+// private List<LayoutNodeComponent> children = new ArrayList<LayoutNodeComponent>();
 
  protected DockContainerComponent(LayoutEditor led, DockContainerComponent cn)
  {
@@ -41,7 +38,7 @@ public abstract class DockContainerComponent extends LayoutNodeComponent
 
  public void addChildComponent(LayoutNodeComponent nc)
  {
-  children.add(nc);
+  addChild(nc);
  }
 
  public abstract void splitToColumns(DockComponent dockComponent, int rowNum);

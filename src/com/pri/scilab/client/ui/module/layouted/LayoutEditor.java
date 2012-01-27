@@ -2,10 +2,13 @@ package com.pri.scilab.client.ui.module.layouted;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.pri.scilab.client.ui.module.activator.ComponentViewPort;
+import com.pri.scilab.client.ui.module.activator.HierarchyListener;
 import com.pri.scilab.shared.dto.Dock;
 import com.pri.scilab.shared.dto.HSplit;
 import com.pri.scilab.shared.dto.LayoutComponent;
@@ -19,21 +22,30 @@ import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
-public class LayoutEditor extends DockContainerComponent implements Component
+public class LayoutEditor extends DockContainerComponent implements Component, HierarchyListener<Component>
 {
+ private static class Int
+ {
+  int i;
+ }
+ 
  private enum Actions
  {
   RENAME
  }
  
  private static final String defaultDockNamePrefix = "Dock ";
+ private static final String defaultVSplitNamePrefix = "VSplit ";
+ private static final String defaultHSplitNamePrefix = "HSplit ";
  
  private String icon="/images/silk/layout.png";
 
  private PageLayout layout;
  private ComponentViewPort cPane;
  
- private int maxDockPostfx; 
+ Map<String, Int> countMap = new TreeMap<String, LayoutEditor.Int>();
+
+
 // private List<Editor> subEd;
  
  public LayoutEditor( String nm )
@@ -49,7 +61,7 @@ public class LayoutEditor extends DockContainerComponent implements Component
  
   createLayoutComponents();
   
-  maxDockPostfx=findMaxDockNameSuffixRec(layout.getRootComponent());
+//  maxDockPostfx=findMaxDockNameSuffixRec(layout.getRootComponent());
  }
 
  @Override
@@ -108,9 +120,33 @@ public class LayoutEditor extends DockContainerComponent implements Component
 
  public String getNewDockName()
  {
-  return defaultDockNamePrefix+(++maxDockPostfx);
+  return getNewXName(defaultDockNamePrefix);
  }
  
+ public String getNewVSplitName()
+ {
+  return getNewXName(defaultVSplitNamePrefix);
+ }
+
+ public String getNewHSplitName()
+ {
+  return getNewXName(defaultHSplitNamePrefix);
+ }
+
+ public String getNewXName( String pfx )
+ {
+  Int i = countMap.get(pfx);
+  
+  if( i != null )
+   return pfx + (++i.i);
+  
+  countMap.put(pfx, i=new Int());
+  
+  i.i = findMaxForPrefix(pfx, this);
+  
+  return pfx + (++i.i);
+ }
+
 
  @Override
  public void actionPerformed(String action, Collection<Component> objects)
@@ -230,18 +266,21 @@ public class LayoutEditor extends DockContainerComponent implements Component
   return lay;
  }
 
- private static int findMaxDockNameSuffixRec( LayoutComponent dk )
+ protected String generateNewName( String pfx )
  {
-  int max=0;
+  return pfx+(findMaxForPrefix(pfx, this)+1);
+ }
+ 
+ private int findMaxForPrefix( String pfx, Component comp )
+ {
+  int max = 0;
   
-  String name = dk.getName();
-  
-  if( name.startsWith(defaultDockNamePrefix)  )
+  if( comp.getName().startsWith(pfx) )
   {
    try
    {
-    int nm = Integer.parseInt(name.substring(defaultDockNamePrefix.length()));
-    
+    int nm = Integer.parseInt(comp.getName().substring(pfx.length()));
+
     if( nm > max )
      max=nm;
    }
@@ -250,19 +289,53 @@ public class LayoutEditor extends DockContainerComponent implements Component
    }
   }
   
-  if( dk instanceof Split && ((Split)dk).getComponents() != null )
+  if( comp instanceof DockContainerComponent && ((DockContainerComponent)comp).getSubComponents() != null )
   {
-   for( LayoutComponent sdk : ((Split)dk).getComponents() )
+   for( Component sdk : ((DockContainerComponent)comp).getSubComponents() )
    {
-    int nm = findMaxDockNameSuffixRec(sdk);
+    int nm = findMaxForPrefix(pfx, sdk);
 
     if( nm > max )
      max=nm;
    }
   }
-  
+
   return max;
  }
+ 
+// private static int findMaxDockNameSuffixRec( LayoutComponent dk )
+// {
+//  int max=0;
+//  
+//  String name = dk.getName();
+//  
+//  if( name.startsWith(defaultDockNamePrefix)  )
+//  {
+//   try
+//   {
+//    int nm = Integer.parseInt(name.substring(defaultDockNamePrefix.length()));
+//    
+//    if( nm > max )
+//     max=nm;
+//   }
+//   catch(Exception e)
+//   {
+//   }
+//  }
+//  
+//  if( dk instanceof Split && ((Split)dk).getComponents() != null )
+//  {
+//   for( LayoutComponent sdk : ((Split)dk).getComponents() )
+//   {
+//    int nm = findMaxDockNameSuffixRec(sdk);
+//
+//    if( nm > max )
+//     max=nm;
+//   }
+//  }
+//  
+//  return max;
+// }
  
 /* 
  class RootContainer extends DockContainerComponent
@@ -421,6 +494,7 @@ public class LayoutEditor extends DockContainerComponent implements Component
   
   
   HSplitEditor contEdt = new HSplitEditor(getLayoutEditor(), this);
+  contEdt.setId( getNewHSplitName() );
 
   HLayout hl = new HLayout(1);
   hl.setWidth("100%");
@@ -484,6 +558,7 @@ public class LayoutEditor extends DockContainerComponent implements Component
   
 
   VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
+  contEdt.setId( getNewVSplitName() );
 
   VLayout vl = new VLayout(1);
   vl.setHeight("100%");
@@ -556,5 +631,28 @@ public class LayoutEditor extends DockContainerComponent implements Component
  public boolean canSetChildHeight()
  {
   return false;
+ }
+
+ @Override
+ public void childInserted(int idx, Component chld)
+ {
+ }
+
+ @Override
+ public void childReplaced(int idx, Component chld)
+ {
+  countMap.clear();
+ }
+
+ @Override
+ public void childRemoved(int idx, Component chld)
+ {
+  countMap.clear();
+ }
+
+ @Override
+ public void nodeChanged()
+ {
+  countMap.clear();
  }
 }

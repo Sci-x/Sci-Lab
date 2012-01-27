@@ -1,15 +1,24 @@
 package com.pri.scilab.shared.dto;
 
-public class PageLayout
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class PageLayout implements Serializable, IsSerializable
 {
  private String name;
  private LayoutComponent rootComponent;
  
+ public PageLayout()
+ {}
  
  public PageLayout(String nm)
  {
   name = nm;
   rootComponent = new Dock();
+  
+  rootComponent.setWidth(-100);
+  rootComponent.setHeight(-100);
   
   rootComponent.setName("Page Dock");
  }
