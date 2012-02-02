@@ -14,14 +14,28 @@
 	<servlet>
 		<description>
 		</description>
-		<display-name>BackendServiceServlet</display-name>
-		<servlet-name>BackendServiceServlet</servlet-name>
+		<display-name>AdminServiceServlet</display-name>
+		<servlet-name>AdminServiceServlet</servlet-name>
 		<servlet-class>
-		com.pri.scilab.server.service.BackendServiceServlet</servlet-class>
+		com.pri.scilab.admin.server.service.BackendServiceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>BackendServiceServlet</servlet-name>
-		<url-pattern>/scilab/Service</url-pattern>
+		<servlet-name>AdminServiceServlet</servlet-name>
+		<url-pattern>/admin/Service</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<description>
+		</description>
+		<display-name>PageServiceServlet</display-name>
+		<servlet-name>PageServiceServlet</servlet-name>
+		<servlet-class>
+		com.pri.scilab.page.server.service.PageServiceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PageServiceServlet</servlet-name>
+		<url-pattern>/page/Service</url-pattern>
 	</servlet-mapping>
 
 </web-app>
