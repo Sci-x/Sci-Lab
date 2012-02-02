@@ -1,6 +1,7 @@
 package com.pri.scilab.client.ui.module.layouted;
 
 import com.pri.scilab.client.ui.module.activator.AbstractComponent;
+import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
@@ -8,6 +9,36 @@ import com.smartgwt.client.widgets.Canvas;
 
 public abstract class LayoutNodeComponent extends AbstractComponent
 {
+ public enum Actions
+ {
+  ADD_COLS,
+  ADD_ROWS,
+  SPLIT2COL,
+  SPLIT2ROW,
+  SET_W,
+  SET_H,
+  REMOVE,
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+ }
+ 
+ protected static Action splt2ColAct = new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null);
+ protected static Action splt2RowAct = new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null);
+ protected static Action setWidthAct = new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null);
+ protected static Action setHeightAct = new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null);
+ protected static Action remAct = new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null);
+
+ protected static Action leftAct = new Action("Left",Actions.LEFT.name(),"/images/silk/arrow_left.png",null);
+ protected static Action rightAct = new Action("Right",Actions.RIGHT.name(),"/images/silk/arrow_right.png",null);
+ protected static Action upAct = new Action("Up",Actions.LEFT.name(),"/images/silk/arrow_up.png",null);
+ protected static Action downAct = new Action("Down",Actions.RIGHT.name(),"/images/silk/arrow_down.png",null);
+
+ protected static Action addColAct = new Action("Add columns",Actions.ADD_COLS.name(),"/images/silk/application_hsplit_add.png",null);
+ protected static Action addRowAct = new Action("Add rows",Actions.ADD_ROWS.name(),"/images/silk/application_vsplit_add.png",null);
+
+ 
 // private Dock dock;
  private LayoutEditor layEd;
  private Canvas panel;
@@ -15,11 +46,9 @@ public abstract class LayoutNodeComponent extends AbstractComponent
  private int height;
 // private DockContainerComponent container;
  
- protected LayoutNodeComponent( LayoutEditor led, DockContainerComponent cn )
+ protected LayoutNodeComponent( LayoutEditor led )
  {
   layEd=led;
-//  dock=d;
-  setParentComponent(cn);
   
   addHierarchyListener(led);
  }

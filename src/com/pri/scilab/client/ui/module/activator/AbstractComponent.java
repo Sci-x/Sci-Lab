@@ -26,44 +26,85 @@ public abstract class AbstractComponent implements Component
 //  return pane;
 // }
  
+ @Override
  public String getId()
  {
   return id;
  }
 
+ @Override
  public void setId(String id)
  {
   this.id = id;
  }
  
+ @Override
  public void addChild( Component e )
  {
   if( subComponents == null )
    subComponents=new ArrayList<Component>(10);
   
   subComponents.add(e);
+
+  e.setParentComponent(this);
   
   fireChildInserted(subComponents.size()-1, e);
  }
  
- protected void addChildAt( int ind, Component e )
+ @Override
+ public void insertChild( int ind, Component e )
  {
   if( subComponents == null )
    subComponents=new ArrayList<Component>(10);
   
   subComponents.add(ind,e);
   
+  e.setParentComponent(this);
+  
   fireChildInserted(ind, e);
  }
 
+ @Override
  public void replaceChild(int index, Component e )
  {
   subComponents.set(index,e);
   
+  e.setParentComponent(this);
+
   fireChildReplaced(index,e);
  }
  
+ @Override
+ public void removeChild( Component e )
+ {
+  int i = subComponents.indexOf(e);
+  
+  if( i < 0 )
+   return;
+  
+  subComponents.remove(i);
+  
+  fireChildRemoved(e);
+ }
  
+ @Override
+ public void swapChildren(int idx1, int idx2)
+ {
+  Component cmp1 = getSubComponents().get(idx1);
+  Component cmp2 = getSubComponents().get(idx2);
+  
+  getSubComponents().set(idx1, cmp2);
+  getSubComponents().set(idx2, cmp1);
+  
+  fireChildrenSwaped(idx1, idx2);
+ }
+ 
+ private void fireChildrenSwaped(int idx1, int idx2)
+ {
+  if( listener != null )
+   listener.childrenSwaped(idx1, idx2);
+ }
+
  @Override
  public List<Component> getSubComponents()
  {
@@ -83,10 +124,10 @@ public abstract class AbstractComponent implements Component
    listener.childInserted(idx, chld);
  }
  
- protected void fireChildRemoved(int idx, Component chld)
+ protected void fireChildRemoved(Component chld)
  {
   if( listener != null )
-   listener.childRemoved(idx, chld);
+   listener.childRemoved(chld);
  }
 
  protected void fireComponentChanged()
@@ -141,9 +182,15 @@ public abstract class AbstractComponent implements Component
   return parent;
  }
 
+ @Override
  public void setParentComponent(Component parent)
  {
   this.parent = parent;
  }
 
+ @Override
+ public void requestFocus()
+ {
+  listener.focusRequested();
+ }
 }

@@ -2,7 +2,6 @@ package com.pri.scilab.client.ui.module.layouted;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import com.pri.scilab.client.DataManager;
 import com.pri.scilab.client.ui.module.activator.AbstractComponent;
@@ -18,7 +17,7 @@ public class LayoutsEditor extends AbstractComponent implements Component
   NEW
  }
  
- private List<Component> layouts = new ArrayList<Component>();
+// private List<Component> layouts = new ArrayList<Component>();
  
  public LayoutsEditor()
  {
@@ -32,9 +31,7 @@ public class LayoutsEditor extends AbstractComponent implements Component
    {
     LayoutEditor lay = new LayoutEditor(lt);
 
-    layouts.add(lay);
-    
-    fireChildInserted(layouts.size()-1, lay);
+    addChild(lay);
    }
   }
  }
@@ -80,11 +77,11 @@ public class LayoutsEditor extends AbstractComponent implements Component
   return "Layouts";
  }
 
- @Override
- public List<Component> getSubComponents()
- {
-  return layouts;
- }
+// @Override
+// public List<Component> getSubComponents()
+// {
+//  return layouts;
+// }
 
  @Override
  public void actionPerformed(String action, Component object)
@@ -121,10 +118,12 @@ public class LayoutsEditor extends AbstractComponent implements Component
    max++;
    LayoutEditor lay = new LayoutEditor(newNamePrefix+max);
 //   lay.setName(newNamePrefix+max);
+
+   addChild(lay);
    
-   layouts.add(lay);
-   
-   fireChildInserted(layouts.size()-1, lay);
+//   layouts.add(lay);
+//   
+//   fireChildInserted(layouts.size()-1, lay);
   }
  }
 

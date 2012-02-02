@@ -1,11 +1,11 @@
 package com.pri.scilab.client.ui.module.activator;
 
 
-import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.menu.MenuButton;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.toolbar.ToolStripSeparator;
 
 public class ActionStrip<T> extends ToolStrip
@@ -22,11 +22,15 @@ public class ActionStrip<T> extends ToolStrip
     ts.addMember( new ToolStripSeparator() );
    else if( a.getSubActions() == null )
    {
-    ImgButton bt = new ImgButton();
-    bt.setSrc(a.getCls());
-    bt.setWidth( 16 );
-    bt.setHeight( 16 );
-    bt.setShowDown(false);
+    ToolStripButton bt = new ToolStripButton();
+//    bt.setTitle("");
+//    bt.setShowTitle(false);
+//    bt.setShowDown(false);
+//    bt.setSrc(a.getCls());
+//    bt.setWidth( 16 );
+//    bt.setHeight( 16 );
+    bt.setIcon(a.getCls());
+    bt.setSelected(true);
     bt.setShowRollOver(false);
     bt.setShowFocused(false);
 
@@ -41,7 +45,7 @@ public class ActionStrip<T> extends ToolStrip
      }
     });
     
-    ts.addMember(bt);
+    ts.addButton(bt);
    }
    else
    {

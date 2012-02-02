@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Action
 {
+ public static final Action separator = new Action(null,null);
+ 
  private String   text;
  private String   action;
  private String   cls;

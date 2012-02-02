@@ -13,36 +13,13 @@ import com.smartgwt.client.widgets.Canvas;
 
 public class DockComponent extends LayoutNodeComponent
 {
- public enum Actions
- {
-  SPLIT2COL,
-  SPLIT2ROW,
-  SET_W,
-  SET_H,
-  REMOVE
- }
- private static Action splt2ColAct = new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null);
- private static Action splt2RowAct = new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null);
- private static Action setWidthAct = new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null);
- private static Action setHeightAct = new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null);
- private static Action remAct = new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null);
 
- 
-// private static Action  actins = new Action(null,null,null, new Action[]{
-//   new Action("Split to columns",Actions.SPLIT2COL.name(),"/images/silk/application_hsplit_add.png",null),
-//   new Action("Split to rows",Actions.SPLIT2ROW.name(),"/images/silk/application_vsplit_add.png",null),
-//   new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null),
-//   new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null),
-//   new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null),
-//   
-// });
- 
  private String id; 
 
  
- public DockComponent( LayoutEditor led, DockContainerComponent cont )
+ public DockComponent( LayoutEditor led)
  {
-  super(led,cont);
+  super(led);
  }
  
  public void setPanel( Canvas panel)
@@ -55,7 +32,7 @@ public class DockComponent extends LayoutNodeComponent
  public void activate(ComponentViewPort pane)
  {
   getLayoutEditor().activate(pane);
-  getPanel().setBorder("2px dotted black");
+  getPanel().setBorder("2px dashed blue");
  }
 
 
@@ -87,7 +64,30 @@ public class DockComponent extends LayoutNodeComponent
   if( getContainer().canSetChildHeight() )
    subAc.add(setHeightAct);
   
-  subAc.add(remAct);
+  subAc.add( Action.separator );
+  
+  List<Component> sibls = getContainer().getSubComponents();
+  
+  if( sibls.get(0) != this )
+  {
+   if( getContainer() instanceof HSplitEditor )
+    subAc.add(leftAct);
+   else
+    subAc.add(upAct);
+  }
+  
+  if( sibls.get( sibls.size() -1 ) != this )
+  {
+   if( getContainer() instanceof HSplitEditor )
+    subAc.add(rightAct);
+   else
+    subAc.add(downAct);
+  }
+
+  subAc.add( Action.separator );
+  
+  if( ! ( getContainer() instanceof LayoutEditor ) )
+   subAc.add(remAct);
  
   return new Action(null,null,null,subAc);
  }
@@ -160,6 +160,39 @@ public class DockComponent extends LayoutNodeComponent
     }
    });
   }
+  else if( action.equals(Actions.REMOVE.name() ) )
+  {
+   if( getContainer() != null )
+    getContainer().removeChild( this );
+  }
+  else if( action.equals(Actions.RIGHT.name() ) || action.equals(Actions.DOWN.name() ) )
+  {
+   if( getContainer() == null )
+    return;
+   
+   List<Component> scList = getContainer().getSubComponents();
+   
+   int idx = scList.indexOf(this);
+   
+   if( ( scList.size()-1 ) == idx )
+    return;
+   
+   getContainer().swapChildren( idx, idx+1 );
+  }
+  else if( action.equals(Actions.LEFT.name() ) || action.equals(Actions.UP.name() ) )
+  {
+   if( getContainer() == null )
+    return;
+   
+   List<Component> scList = getContainer().getSubComponents();
+   
+   int idx = scList.indexOf(this);
+   
+   if( 0 == idx )
+    return;
+   
+   getContainer().swapChildren( idx, idx-1 );
+  }
 
  }
  
@@ -194,6 +227,5 @@ public class DockComponent extends LayoutNodeComponent
  {
   this.id = id;
  }
-
 
 }

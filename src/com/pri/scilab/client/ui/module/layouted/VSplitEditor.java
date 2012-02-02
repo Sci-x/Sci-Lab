@@ -1,10 +1,8 @@
 package com.pri.scilab.client.ui.module.layouted;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.pri.scilab.client.ui.module.activator.Action;
 import com.pri.scilab.client.ui.module.activator.Component;
 import com.pri.scilab.client.ui.module.activator.ComponentViewPort;
 import com.smartgwt.client.util.SC;
@@ -17,9 +15,9 @@ public class VSplitEditor extends DockContainerComponent
 {
 
 
- public VSplitEditor( LayoutEditor led, DockContainerComponent cn)
+ public VSplitEditor( LayoutEditor led )
  {
-  super(led, cn);
+  super(led );
  }
  
  public void setPanel(Canvas panel)
@@ -27,40 +25,22 @@ public class VSplitEditor extends DockContainerComponent
   super.setPanel(panel);
   
   if( panel != null )
-   panel.setBorder("1px dashed green");
+   panel.setBorder("1px dashed black");
  }
  
  @Override
  public void activate(ComponentViewPort pane)
  {
   getLayoutEditor().activate(pane);
-  getPanel().setBorder("2px dashed green");
+  getPanel().setBorder("2px dashed blue");
  }
 
 
  @Override
  public void deactivate()
  {
-  getPanel().setBorder("1px dashed green");
+  getPanel().setBorder("1px dashed black");
   getLayoutEditor().deactivate();
- }
-
- @Override
- public Action getAction()
- {
-  List<Action> subAc = new ArrayList<Action>(5);
-  
-  subAc.add(addRowAct);
-  
-  if( getContainer().canSetChildWidth() )
-   subAc.add(setWidthAct);
-
-  if( getContainer().canSetChildHeight() )
-   subAc.add(setHeightAct);
-  
-  subAc.add(remAct);
- 
-  return new Action(null,null,null,subAc);
  }
 
  @Override
@@ -101,7 +81,36 @@ public class VSplitEditor extends DockContainerComponent
     }
    });
   }
-  
+  else if( action.equals(Actions.REMOVE.name()) )
+   getContainer().removeChild(this);
+  else if( action.equals(Actions.RIGHT.name() ) || action.equals(Actions.DOWN.name() ) )
+  {
+   if( getContainer() == null )
+    return;
+   
+   List<Component> scList = getContainer().getSubComponents();
+   
+   int idx = scList.indexOf(this);
+   
+   if( ( scList.size()-1 ) == idx )
+    return;
+   
+   getContainer().swapChildren( idx, idx+1 );
+  }
+  else if( action.equals(Actions.LEFT.name() ) || action.equals(Actions.UP.name() ) )
+  {
+   if( getContainer() == null )
+    return;
+   
+   List<Component> scList = getContainer().getSubComponents();
+   
+   int idx = scList.indexOf(this);
+   
+   if( 0 == idx )
+    return;
+   
+   getContainer().swapChildren( idx, idx-1 );
+  }
  }
 
  @Override
@@ -168,7 +177,7 @@ public class VSplitEditor extends DockContainerComponent
 
   for(int i=0; i < rowNum; i++ )
   {
-   DockComponent nde = new DockComponent(getLayoutEditor(), this);
+   DockComponent nde = new DockComponent(getLayoutEditor());
    
    nde.setId(getLayoutEditor().getNewDockName());
    nde.setHeight(0);
@@ -203,8 +212,10 @@ public class VSplitEditor extends DockContainerComponent
   }
   
   
-  HSplitEditor contEdt = new HSplitEditor(getLayoutEditor(), this);
+  HSplitEditor contEdt = new HSplitEditor(getLayoutEditor());
   contEdt.setId( getLayoutEditor().getNewHSplitName() );
+  contEdt.setHeight( de.getHeight() );
+  contEdt.setWidth( de.getWidth() );
 
   HLayout hl = new HLayout(1);
   hl.setWidth("100%");
@@ -215,7 +226,7 @@ public class VSplitEditor extends DockContainerComponent
   
   for(int i=0; i < rowNum; i++ )
   {
-   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
+   DockComponent nde = new DockComponent(getLayoutEditor());
    
    nde.setId(getLayoutEditor().getNewDockName());
    nde.setHeight(-100);
@@ -274,13 +285,13 @@ public class VSplitEditor extends DockContainerComponent
   
   for(int i=1; i < rowNum; i++ )
   {
-   DockComponent nde = new DockComponent(getLayoutEditor(), this);
+   DockComponent nde = new DockComponent(getLayoutEditor());
    
    nde.setId(getLayoutEditor().getNewDockName());
    nde.setHeight(newH);
    nde.setWidth(de.getWidth());
 
-   addChildAt(ind+i,nde);
+   insertChild(ind+i,nde);
   }
   
   VLayout panel = (VLayout)getPanel();

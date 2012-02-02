@@ -1,9 +1,15 @@
 package com.pri.scilab.client.ui.module.activator;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
+import com.smartgwt.client.widgets.events.VisibilityChangedHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -19,20 +25,25 @@ public class ActivatorTree extends VLayout
 {
  static final String NAME_PROP="name";
 // static final String CHILDREN_PROP="children";
- static final String COMPONENT_PROP="component";
+ static final String CONTROLLER_PROP="_controller";
  static final String ICON_PROP="icon";
  
  private final Tree treeModel = new Tree();
  private final TreeGrid tree = new TreeGrid();
  
  private Component activeComponent = null;
+ private ComponentViewPort viewPort;
+ private ToolStrip toolStrip;
  
  public ActivatorTree( final ComponentViewPort editorPane, Component[] editors )
  {
+  viewPort=editorPane;
+  
   treeModel.setModelType(TreeModelType.CHILDREN);  
   treeModel.setNameProperty(NAME_PROP);
-//  treeModel.setChildrenProperty(CHILDREN_PROP);
 
+  tree.setSelectionType( SelectionStyle.SINGLE );
+  
   TreeNode rootNode = new TreeNode();
   
   treeModel.setRoot( rootNode );
@@ -45,18 +56,7 @@ public class ActivatorTree extends VLayout
 
    attachComponent(cn, editors[i]);
   }
-  
-//  TreeNode[] nodes = new TreeNode[editors.length];
-//  
-//  
-//  for( int i=0; i < editors.length; i++ )
-//   nodes[i] = createComponentNode(editors[i]);
-  
-//  TreeNode rootNode = new TreeNode();
-  
-//  rootNode.setAttribute(CHILDREN_PROP, nodes);
-  
-//  treeModel.setRoot( rootNode );
+
   
   tree.setShowHeader(false);
   tree.setData(treeModel);
@@ -65,53 +65,20 @@ public class ActivatorTree extends VLayout
 
   treeModel.openAll();
   
-  final ToolStrip ts = new ToolStrip();
-  ts.setWidth100();
-//  ts.setAlign(VerticalAlignment.CENTER);
-  ts.setMembersMargin(3);
-//  ts.setPadding(2);
+  toolStrip = new ToolStrip();
+  toolStrip.setWidth100();
+  toolStrip.setMembersMargin(3);
 
   tree.addNodeClickHandler( new NodeClickHandler()
   {
    @Override
    public void onNodeClick(NodeClickEvent event)
    {
-
-    final Component ed = (Component)event.getNode().getAttributeAsObject(COMPONENT_PROP);
-
-    if( ed == activeComponent )
-     return;
-    
-    
-    Canvas[] sbCanvas = ts.getChildren();
-    
-    if( sbCanvas != null )
-    {
-     for( Canvas cn : sbCanvas )
-     {
-      ts.removeChild(cn);
-     }
-    }
- 
-
-    
-    ActionStrip.putActions(ts, ed.getAction(), ed, new ActionAdapter<Component>()
-      {
-       @Override
-       public void actionPerformed(String action, Component object)
-       {
-        ed.actionPerformed(action, ed);        
-       }
-      });
-
-    if( activeComponent != null )
-     activeComponent.deactivate();
-    
-    activeComponent=ed;
-    
-    ed.activate( editorPane );
+    activateComponent( getNodeComponent(event.getNode()) );
    }
   });
+
+  
 
   
   tree.addNodeContextClickHandler( new NodeContextClickHandler()
@@ -121,7 +88,7 @@ public class ActivatorTree extends VLayout
    {
     event.cancel();
     
-    final Component ed = (Component)event.getNode().getAttributeAsObject(COMPONENT_PROP);
+    final Component ed = getNodeComponent(event.getNode());
     
     Menu nodeMenu = new ActionMenu<Void>( ed.getAction(), null, new ActionAdapter<Void>()
       {
@@ -132,6 +99,16 @@ public class ActivatorTree extends VLayout
        }
       });
       
+    nodeMenu.addVisibilityChangedHandler(new VisibilityChangedHandler()
+    {
+     
+     @Override
+     public void onVisibilityChanged(VisibilityChangedEvent event)
+     {
+      ((Menu)event.getSource()).destroy();
+     }
+    });
+    
       nodeMenu.setTop(event.getY());
       nodeMenu.setLeft(event.getX());
       nodeMenu.show();
@@ -141,9 +118,7 @@ public class ActivatorTree extends VLayout
   );
   
   
-//  ts.setHeight(20);
-  
-  addMember(ts);
+  addMember(toolStrip);
   
   tree.setWidth100();
   tree.setHeight100();
@@ -151,6 +126,35 @@ public class ActivatorTree extends VLayout
   addMember(tree);
  }
  
+ 
+ private void activateComponent( final Component comp )
+ {
+  if( comp == activeComponent )
+   return;
+  
+  
+  Canvas[] sbCanvas = toolStrip.getMembers();
+  
+  toolStrip.removeMembers(sbCanvas);
+
+  
+  ActionStrip.putActions(toolStrip, comp.getAction(), comp, new ActionAdapter<Component>()
+    {
+     @Override
+     public void actionPerformed(String action, Component object)
+     {
+      comp.actionPerformed(action, comp);        
+     }
+    });
+
+  if( activeComponent != null )
+   activeComponent.deactivate();
+  
+  activeComponent=comp;
+  
+  comp.activate( viewPort );
+
+ }
 // private TreeNode createComponentNode( Component ed )
 // {
 //  TreeNode[] subedNodes= null;
@@ -183,6 +187,13 @@ public class ActivatorTree extends VLayout
  {
   TreeNode[] subedNodes= null;
   
+  subedNodes = treeModel.getChildren(myNode);
+  
+  if( subedNodes != null && subedNodes.length > 0 )
+   treeModel.removeList(subedNodes);
+  
+//  treeModel.re
+  
   List<Component> subed = comp.getSubComponents();
   
   if( subed != null )
@@ -203,25 +214,36 @@ public class ActivatorTree extends VLayout
     i++;
    }
   }
-
+  
+  NodeController nc = new NodeController(comp, myNode);
   
   myNode.setTitle(comp.getName());
   myNode.setAttribute(NAME_PROP, comp.getName());
-//  myNode.setAttribute(CHILDREN_PROP, subedNodes);
-  myNode.setAttribute(COMPONENT_PROP, comp);
+  myNode.setAttribute(CONTROLLER_PROP, nc);
   myNode.setAttribute(ICON_PROP, comp.getIcon());
   
-  comp.addHierarchyListener(new ComponentListener(myNode));
+  comp.addHierarchyListener( nc );
 
  }
 
+ private static NodeController getNodeController( Record tn )
+ {
+  return (NodeController)tn.getAttributeAsObject(CONTROLLER_PROP);
+ }
  
- class ComponentListener implements HierarchyListener<Component>
+ private static Component getNodeComponent( Record tn )
+ {
+  return getNodeController(tn).getComponent();
+ }
+
+ class NodeController implements HierarchyListener<Component>
  {
   private TreeNode treeNode;
+  private Component component;
   
-  public ComponentListener(TreeNode nd)
+  public NodeController(Component c, TreeNode nd)
   {
+   component = c;
    treeNode=nd;
   }
   
@@ -241,32 +263,53 @@ public class ActivatorTree extends VLayout
   }
 
   @Override
-  public void childRemoved(int idx, Component chld)
+  public void childRemoved(Component chld)
   {
    TreeNode[] cNodes = treeModel.getChildren(treeNode);
+ 
+   ListGridRecord rec = tree.getSelectedRecord();
+
+   boolean found = false;
+   
+   NodeController chNodeCont = null;
    
    for( int i=0; i < cNodes.length; i++ )
    {
-    Component cmp = (Component)cNodes[i].getAttributeAsObject(COMPONENT_PROP);
+    chNodeCont = getNodeController(cNodes[i]);
     
-    if( cmp == chld )
+    if( chNodeCont.getComponent() == chld )
     {
      treeModel.remove(cNodes[i]);
-     return;
+     found = true;
+     break;
     }
    }
    
-   chld.removeHierarchyListener( this );
+   if(! found )
+    return;
+   
+   if( rec != null )
+   {
+    Component cmp = getNodeComponent(rec);
+    
+    if( cmp == chld )
+    {
+     cmp.deactivate();
+    
+     toolStrip.removeMembers(toolStrip.getMembers());
+    }
+   }
+
+   
+   chld.removeHierarchyListener( chNodeCont );
   }
 
 
   @Override
   public void nodeChanged()
   {
-   Component comp = (Component) treeNode.getAttributeAsObject(COMPONENT_PROP);
-   
-   treeNode.setTitle(comp.getName());
-   treeNode.setIcon(comp.getIcon());
+   treeNode.setTitle(component.getName());
+   treeNode.setIcon(component.getIcon());
    
    tree.redraw();
   }
@@ -278,10 +321,62 @@ public class ActivatorTree extends VLayout
    attachComponent(treeModel.getChildren(treeNode)[idx], chld);
 
    tree.redraw();
+   
+   ListGridRecord rec = tree.getSelectedRecord();
+   
+   if( rec != null)
+   {
+    Component cmp = getNodeComponent(rec);
+    
+    activateComponent( cmp );
+   }
+
+  }
+
+
+  @Override
+  public void focusRequested()
+  {
+   selectComponent(component);
+  }
+
+
+  @Override
+  public void childrenSwaped(int idx1, int idx2)
+  {
+   TreeNode[] chld = treeModel.getChildren(treeNode);
+   
+   NodeController nc1 = getNodeController(chld[idx1]);
+   NodeController nc2 = getNodeController(chld[idx2]);
+   
+   nc1.getComponent().removeHierarchyListener( nc1 );
+   nc2.getComponent().removeHierarchyListener( nc2 );
+   
+   attachComponent(chld[idx1], nc2.getComponent());
+   attachComponent(chld[idx2], nc1.getComponent());
+
+   tree.redraw();
+   
+   ListGridRecord rec = tree.getSelectedRecord();
+   
+   if( rec != null)
+   {
+    Component cmp = getNodeComponent(rec);
+    
+    activateComponent( cmp );
+   }
+
+  }
+
+
+  public Component getComponent()
+  {
+   return component;
   }
 
   
  }
+
  
  public boolean activateComponent( List<String> path )
  {
@@ -295,7 +390,7 @@ public class ActivatorTree extends VLayout
    
    for( TreeNode nd : chldNodes )
    {
-    Component comp = (Component) nd.getAttributeAsObject(COMPONENT_PROP);
+    Component comp = getNodeComponent(nd);
     
     if( pEl.equals(comp.getId()) )
     {
@@ -315,4 +410,186 @@ public class ActivatorTree extends VLayout
   
   return true;
  }
+ 
+ private TreeNode findTreeNode( Component c, boolean openPath )
+ {
+  ArrayList<Component> path = new ArrayList<Component>();
+  
+  Component comp = c;
+  
+  while( comp != null )
+  {
+   path.add(comp);
+   
+   comp = comp.getParentComponent();
+  }
+  
+  TreeNode cNode = treeModel.getRoot();
+  
+  for( int i=path.size()-1; i >= 0; i-- )
+  {
+   boolean found = false;
+   
+   for( TreeNode tn : treeModel.getChildren(cNode) )
+   {
+    if( getNodeComponent(tn) == path.get(i) )
+    {
+     if( openPath )
+      treeModel.openFolder(tn);
+     
+     cNode = tn;
+     
+     found = true;
+     
+     break;
+    }
+   }
+   
+   if( ! found )
+    return null;
+  }
+  
+  return cNode;
+ }
+ 
+ public boolean selectComponent( Component c )
+ {
+  TreeNode cNode = findTreeNode(c, true);
+
+  if( cNode == null )
+   return false;
+  
+  tree.selectSingleRecord(cNode);
+  
+  activateComponent(c);
+  
+  return true;
+ }
+
+/*
+ 
+ @Override
+ public void childInserted(int idx, Component chld)
+ {
+  TreeNode nNd = new TreeNode();
+  
+  TreeNode cNode = findTreeNode(chld, false);
+  
+  treeModel.add(nNd, cNode, idx);
+  
+  attachComponent(nNd, chld);
+  
+//  for( TreeNode n : treeModel.getChildren(treeNode) )
+//    System.out.println( n.getClass().getName());
+//  chld.addHierarchyListener( new EditorListener(nNd) );
+ }
+
+ @Override
+ public void childRemoved(int idx, Component chld)
+ {
+  TreeNode cNode = findTreeNode(chld, false);
+
+  TreeNode[] cNodes = treeModel.getChildren(cNode);
+
+  ListGridRecord rec = tree.getSelectedRecord();
+
+  boolean found = false;
+  
+  for( int i=0; i < cNodes.length; i++ )
+  {
+   Component cmp = (Component)cNodes[i].getAttributeAsObject(COMPONENT_PROP);
+   
+   if( cmp == chld )
+   {
+    treeModel.remove(cNodes[i]);
+    found = true;
+    break;
+   }
+  }
+  
+  if(! found )
+   return;
+  
+  if( rec != null )
+  {
+   Component cmp = (Component)rec.getAttributeAsObject(COMPONENT_PROP);
+   
+   if( cmp == chld )
+   {
+    cmp.deactivate();
+   
+    toolStrip.removeMembers(toolStrip.getMembers());
+   }
+  }
+
+  
+  chld.removeHierarchyListener( this );
+ }
+
+
+ @Override
+ public void nodeChanged( Component c )
+ {
+  TreeNode cNode = findTreeNode(c, false);
+  
+  cNode.setTitle(c.getName());
+  cNode.setIcon(c.getIcon());
+  
+  tree.redraw();
+ }
+
+
+ @Override
+ public void childReplaced(int idx, Component chld)
+ {
+  TreeNode cNode = findTreeNode(chld, false);
+
+  attachComponent(treeModel.getChildren(cNode)[idx], chld);
+
+  tree.redraw();
+  
+  ListGridRecord rec = tree.getSelectedRecord();
+  
+  if( rec != null)
+  {
+   Component cmp = (Component)rec.getAttributeAsObject(COMPONENT_PROP);
+   
+   activateComponent( cmp );
+  }
+
+ }
+
+
+ @Override
+ public void focusRequested(Component comp)
+ {
+  selectComponent(comp);
+ }
+
+
+ @Override
+ public void childrenSwaped(int idx1, int idx2)
+ {
+  TreeNode[] chld = treeModel.getChildren(treeNode);
+  
+  Component c1 = (Component)chld[idx1].getAttributeAsObject(COMPONENT_PROP);
+  Component c2 = (Component)chld[idx2].getAttributeAsObject(COMPONENT_PROP);
+  
+  attachComponent(chld[idx1], c2);
+  attachComponent(chld[idx2], c1);
+
+  tree.redraw();
+  
+  ListGridRecord rec = tree.getSelectedRecord();
+  
+  if( rec != null)
+  {
+   Component cmp = (Component)rec.getAttributeAsObject(COMPONENT_PROP);
+   
+   activateComponent( cmp );
+  }
+
+ }
+
+*/
 }

@@ -1,32 +1,22 @@
 package com.pri.scilab.client.ui.module.layouted;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.pri.scilab.client.ui.module.activator.Action;
+import com.pri.scilab.client.ui.module.activator.Component;
+import com.smartgwt.client.widgets.layout.Layout;
 
 
 
 public abstract class DockContainerComponent extends LayoutNodeComponent
 {
- public enum Actions
- {
-  ADD_COLS,
-  ADD_ROWS,
-  SET_W,
-  SET_H,
-  REMOVE
- }
- 
- protected static Action addColAct = new Action("Add columns",Actions.ADD_COLS.name(),"/images/silk/application_hsplit_add.png",null);
- protected static Action addRowAct = new Action("Add rows",Actions.ADD_ROWS.name(),"/images/silk/application_vsplit_add.png",null);
- protected static Action setWidthAct = new Action("Set width",Actions.SET_W.name(),"/images/silk/hsize.png",null);
- protected static Action setHeightAct = new Action("Set height",Actions.SET_H.name(),"/images/silk/vsize.png",null);
- protected static Action remAct = new Action("Remove",Actions.REMOVE.name(),"/images/silk/cross.png",null);
-
  
 // private List<LayoutNodeComponent> children = new ArrayList<LayoutNodeComponent>();
 
- protected DockContainerComponent(LayoutEditor led, DockContainerComponent cn)
+ protected DockContainerComponent(LayoutEditor led)
  {
-  super(led, cn);
+  super(led);
  }
 
 // public abstract void splitToColumns( DockComponent de, int rowNum);
@@ -50,4 +40,111 @@ public abstract class DockContainerComponent extends LayoutNodeComponent
  public abstract boolean canSetChildWidth();
  public abstract boolean canSetChildHeight();
 
+ public int removeChild(LayoutNodeComponent comp)
+ {
+  if( getSubComponents().size() < 2 )
+   return getContainer().removeChild( this );
+
+  
+  int ind=-1;
+  boolean found = false;
+  
+  for( Component ed : getSubComponents() )
+  {
+   ind++;
+   
+   if( ed == comp )
+   {
+    found = true;
+    break;
+   }
+  }
+  
+  if( ! found )
+   return -1;
+
+  ((Layout)getPanel()).removeMember(comp.getPanel());
+  
+  if( getSubComponents().size() == 2 )
+  {
+   int myInd=-1;
+   
+   for( Component cp : getContainer().getSubComponents() )
+   {
+    myInd++;
+    
+    if( cp == this)
+     break;
+   }
+
+   LayoutNodeComponent othComp = (LayoutNodeComponent)getSubComponents().get(ind==0?1:0);
+   
+   othComp.setWidth(getWidth());
+   othComp.setHeight(getHeight());
+   
+   getParentComponent().replaceChild(myInd, othComp);
+   
+//   
+//   
+//   getContainer().addChildAt( myInd, othComp );
+   
+   ((Layout)getPanel()).removeMember(othComp.getPanel());
+   ((Layout)getContainer().getPanel()).removeMember(getPanel());
+   ((Layout)getContainer().getPanel()).addMember(othComp.getPanel(), myInd);
+  }
+  else  
+   super.removeChild(comp);
+  
+  return ind;
+ }
+
+ public void swapChildren(int idx1, int idx2)
+ {
+  super.swapChildren(idx1, idx2);
+  
+  if( getPanel() != null )
+   ((Layout)getPanel()).reorderMember(idx2, idx1);
+ }
+ 
+ @Override
+ public Action getAction()
+ {
+  List<Action> subAc = new ArrayList<Action>(5);
+  
+  if( this instanceof HSplitEditor )
+   subAc.add(addColAct);
+  else
+   subAc.add(addRowAct);
+  
+  if( getContainer().canSetChildWidth() )
+   subAc.add(setWidthAct);
+
+  if( getContainer().canSetChildHeight() )
+   subAc.add(setHeightAct);
+  
+  subAc.add( Action.separator );
+  
+  List<Component> sibls = getContainer().getSubComponents();
+  
+  if( sibls.get(0) != this )
+  {
+   if( getContainer() instanceof HSplitEditor )
+    subAc.add(leftAct);
+   else
+    subAc.add(upAct);
+  }
+  
+  if( sibls.get( sibls.size() -1 ) != this )
+  {
+   if( getContainer() instanceof HSplitEditor )
+    subAc.add(rightAct);
+   else
+    subAc.add(downAct);
+  }
+
+  subAc.add( Action.separator );
+  subAc.add(remAct);
+ 
+  return new Action(null,null,null,subAc);
+ }
 }

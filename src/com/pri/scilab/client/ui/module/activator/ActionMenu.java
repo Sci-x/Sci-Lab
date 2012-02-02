@@ -29,6 +29,10 @@ public class ActionMenu<T> extends Menu implements ItemClickHandler
  
  private void createMenu( Menu mnu, List<Action> acts )
  {
+  MenuItem[] items = new MenuItem[ acts.size() ];
+  
+  int i=0;
+  
   for(Action act : acts)
   {
    if(act.getText() == null)
@@ -36,7 +40,8 @@ public class ActionMenu<T> extends Menu implements ItemClickHandler
     if(separator == null)
      separator = new MenuItemSeparator();
 
-    mnu.addItem(separator);
+    items[i++] = separator;
+//    mnu.addItem(separator);
    }
    else
    {
@@ -52,10 +57,13 @@ public class ActionMenu<T> extends Menu implements ItemClickHandler
 
     }
     
-    mnu.addItem(item);
+    items[i++] = item;
+
+//    mnu.addItem(item);
    }
   }
-
+  
+  mnu.setData(items);
  }
  
  private class ActionMenuItem extends MenuItem

@@ -55,7 +55,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
 
  public LayoutEditor(PageLayout lt)
  {
-  super(null,null);
+  super(null);
   
   layout = lt;
  
@@ -170,11 +170,17 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   
   Canvas root = constructLayoutView( (LayoutNodeComponent) getSubComponents().get(0) );
   
+  VLayout myContainer = new VLayout();
+  
+  myContainer.setWidth100();
+  myContainer.setHeight100();
+  
+  myContainer.addMember(root);
 
   pane.clean();
-  pane.getPane().addChild(root);
+  pane.getPane().addChild(myContainer);
   pane.setOwner(this);
-  
+  setPanel(myContainer);
  }
 
  @Override
@@ -205,12 +211,12 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   if( lc instanceof Dock )
   {
    split = false;
-   comp = new DockComponent(this, parent);
+   comp = new DockComponent(this);
   }
   else if( lc instanceof HSplit)
-   comp = new HSplitEditor(this, parent);
+   comp = new HSplitEditor(this);
   else if( lc instanceof VSplit)
-   comp = new VSplitEditor(this, parent);
+   comp = new VSplitEditor(this);
   else
    return null;
    
@@ -493,7 +499,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   }
   
   
-  HSplitEditor contEdt = new HSplitEditor(getLayoutEditor(), this);
+  HSplitEditor contEdt = new HSplitEditor(getLayoutEditor());
   contEdt.setId( getNewHSplitName() );
 
   HLayout hl = new HLayout(1);
@@ -505,7 +511,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   
   for(int i=0; i < rowNum; i++ )
   {
-   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
+   DockComponent nde = new DockComponent(getLayoutEditor());
    
    nde.setId(getLayoutEditor().getNewDockName());
    nde.setHeight(-100);
@@ -557,7 +563,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   }
   
 
-  VSplitEditor contEdt = new VSplitEditor(getLayoutEditor(), this);
+  VSplitEditor contEdt = new VSplitEditor(getLayoutEditor());
   contEdt.setId( getNewVSplitName() );
 
   VLayout vl = new VLayout(1);
@@ -569,7 +575,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
   
   for(int i=0; i < rowNum; i++ )
   {
-   DockComponent nde = new DockComponent(getLayoutEditor(), contEdt);
+   DockComponent nde = new DockComponent(getLayoutEditor());
    
    nde.setId(getLayoutEditor().getNewDockName());
    nde.setHeight(0);
@@ -608,7 +614,12 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
 //  fireChildInserted(ind, contEdt);
  }
 
-
+ @Override
+ public int removeChild( LayoutNodeComponent comp )
+ {
+  return -1;
+ }
+ 
  @Override
  public boolean setHeightOfChildren(int value)
  {
@@ -645,7 +656,7 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
  }
 
  @Override
- public void childRemoved(int idx, Component chld)
+ public void childRemoved(Component chld)
  {
   countMap.clear();
  }
@@ -654,5 +665,17 @@ public class LayoutEditor extends DockContainerComponent implements Component, H
  public void nodeChanged()
  {
   countMap.clear();
+ }
+
+ @Override
+ public void focusRequested()
+ {
+ }
+
+ @Override
+ public void childrenSwaped(int idx1, int idx2)
+ {
+  // TODO Auto-generated method stub
+  
  }
 }

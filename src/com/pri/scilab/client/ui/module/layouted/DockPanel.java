@@ -7,7 +7,14 @@ import com.pri.scilab.client.ui.module.activator.Component;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.events.ShowContextMenuEvent;
+import com.smartgwt.client.widgets.events.ShowContextMenuHandler;
+import com.smartgwt.client.widgets.events.VisibilityChangedEvent;
+import com.smartgwt.client.widgets.events.VisibilityChangedHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.menu.Menu;
 
 public class DockPanel extends Label //implements ActionHandler<Void>
 {
@@ -17,7 +24,7 @@ public class DockPanel extends Label //implements ActionHandler<Void>
 // private ActionHandler<Void> actListener;
  private DockComponent dockComponent;
  
- public DockPanel(String wd, String ht, DockComponent dockComp, ActionHandler<Component> lsnr)
+ public DockPanel(String wd, String ht, DockComponent dockComp, final ActionHandler<Component> lsnr)
  {
   dockComponent = dockComp;
 //  container=cont;
@@ -32,7 +39,84 @@ public class DockPanel extends Label //implements ActionHandler<Void>
   setWidth(wd);
   setHeight(ht);
   
-  setContextMenu(new ActionMenu<Component>( dockComp.getAction(), null, lsnr ) );
+//  setContextMenu(new ActionMenu<Component>( dockComp.getAction(), null, lsnr ) );
+  
+  addClickHandler( new ClickHandler()
+  {
+   @Override
+   public void onClick(ClickEvent event)
+   {
+    dockComponent.requestFocus();
+   }
+  });
+  
+  addShowContextMenuHandler( new ShowContextMenuHandler()
+  {
+
+   @Override
+   public void onShowContextMenu(ShowContextMenuEvent event)
+   {
+
+    Menu nodeMenu = new ActionMenu<Component>(dockComponent.getAction(), null, lsnr);
+
+    nodeMenu.addVisibilityChangedHandler(new VisibilityChangedHandler()
+    {
+
+     @Override
+     public void onVisibilityChanged(VisibilityChangedEvent event)
+     {
+//      ((Menu) event.getSource()).destroy();
+     }
+    });
+
+//    setContextMenu(nodeMenu);
+    
+    nodeMenu.showContextMenu();
+
+    // nodeMenu.setTop(event.getY());
+    // nodeMenu.setLeft(event.getX());
+    // nodeMenu.show();
+
+    dockComponent.requestFocus();
+
+    event.cancel();
+
+   }
+  });
+  
+//  addRightMouseDownHandler(new RightMouseDownHandler()
+//  {
+//   
+//   @Override
+//   public void onRightMouseDown(RightMouseDownEvent event)
+//   {
+////    setContextMenu(new ActionMenu<Component>( dockComponent.getAction(), null, lsnr ));
+//    
+//    event.cancel();
+//    
+//    
+//    Menu nodeMenu = new ActionMenu<Component>( dockComponent.getAction(), null, lsnr);
+//    
+//    nodeMenu.addVisibilityChangedHandler(new VisibilityChangedHandler()
+//    {
+//     
+//     @Override
+//     public void onVisibilityChanged(VisibilityChangedEvent event)
+//     {
+//      ((Menu)event.getSource()).destroy();
+//     }
+//    });
+//    
+//    setContextMenu( nodeMenu );
+//    
+////      nodeMenu.setTop(event.getY());
+////      nodeMenu.setLeft(event.getX());
+////      nodeMenu.show();
+//      
+//      dockComponent.requestFocus();
+//
+//   }
+//  });
 //  widthStr = wd;
 //  heightStr = ht;
  }

@@ -25,10 +25,10 @@ public class HierarchyListenerMultiplexor<T> implements HierarchyListener<T>
  }
 
  @Override
- public void childRemoved(int idx, T chld)
+ public void childRemoved(T chld)
  {
   for( HierarchyListener<T> lsn : listeners )
-   lsn.childRemoved(idx, chld);
+   lsn.childRemoved(chld);
  }
 
  @Override
@@ -43,6 +43,20 @@ public class HierarchyListenerMultiplexor<T> implements HierarchyListener<T>
  {
   for( HierarchyListener<T> lsn : listeners )
    lsn.childReplaced(idx, chld);
+ }
+
+ @Override
+ public void focusRequested()
+ {
+  for( HierarchyListener<T> lsn : listeners )
+   lsn.focusRequested();
+ }
+
+ @Override
+ public void childrenSwaped(int idx1, int idx2)
+ {
+  for( HierarchyListener<T> lsn : listeners )
+   lsn.childrenSwaped(idx1, idx2);
  }
 
 }
