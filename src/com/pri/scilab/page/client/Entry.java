@@ -14,7 +14,7 @@ public class Entry implements EntryPoint
  @Override
  public void onModuleLoad()
  {
-  PageService.async.getPage("001", new AsyncCallback<Page>()
+  PageServiceAsync.instance.getPage("001", new AsyncCallback<Page>()
   {
    
    @Override

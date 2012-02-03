@@ -1,6 +1,5 @@
 package com.pri.scilab.page.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.pri.scilab.shared.dto.Page;
@@ -8,8 +7,6 @@ import com.pri.scilab.shared.dto.Page;
 @RemoteServiceRelativePath("Service")
 public interface PageService extends RemoteService
 {
- static PageServiceAsync async = (PageServiceAsync) GWT.create(PageService.class);
-
  Page getPage( String pgId );
 
 // public static final String SERVICE_URI = "Service";

@@ -1,8 +1,9 @@
 package com.pri.scilab.shared.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Page
+public class Page implements Serializable
 {
  private PageLayout    layout;
  private List<Docklet> docklets;

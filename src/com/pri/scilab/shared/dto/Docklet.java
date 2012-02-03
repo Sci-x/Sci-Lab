@@ -1,9 +1,11 @@
 package com.pri.scilab.shared.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Docklet
+public class Docklet implements Serializable
 {
+ private String title;
  private String  contents;
 
  private boolean hasFrame;
@@ -42,12 +44,12 @@ public class Docklet
   this.hasHeader = hasHeader;
  }
 
- public String getSource()
+ public String getTarget()
  {
   return source;
  }
 
- public void setSource(String source)
+ public void setTarget(String source)
  {
   this.source = source;
  }
@@ -60,5 +62,15 @@ public class Docklet
  public void setTags(List<Tag> tags)
  {
   this.tags = tags;
+ }
+
+ public String getTitle()
+ {
+  return title;
+ }
+
+ public void setTitle(String title)
+ {
+  this.title = title;
  }
 }
