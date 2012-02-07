@@ -17,11 +17,14 @@ import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.LayoutPolicy;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.EdgedCanvas;
 import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.DropEvent;
+import com.smartgwt.client.widgets.events.DropHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -52,27 +55,33 @@ public class Renderer extends VLayout
 
  private Canvas createDockletVisual(Docklet dkl)
  {
-  if( dkl.isHasHeader() )
+  if( ! dkl.hasHeader() )
   {
    HTMLFlow c = new HTMLFlow();
    
    c.setContents(dkl.getContents());
    
-   if( dkl.isHasFrame() )
+   if( dkl.hasFrame() )
    {
     EdgedCanvas ec = new EdgedCanvas();
     
     ec.addChild(c);
     
+    ec.setWidth100();
+    
     return ec;
    }
    
+   c.setWidth100();
    return c;
   }
   
   Window dk = new Window();
 
-  dk.setShowShadow(false);  
+  dk.setShowShadow(false);
+  dk.setAutoSize( true );
+//  dk.setWidth100();
+  
   
   // enable predefined component animation  
   dk.setAnimateMinimize(true);  
@@ -92,14 +101,20 @@ public class Renderer extends VLayout
 
   // these settings enable the portlet to autosize its height only to fit its contents  
   // (since width is determined from the containing layout, not the portlet contents)  
-  dk.setVPolicy(LayoutPolicy.NONE);  
-  dk.setOverflow(Overflow.VISIBLE);  
 
+  
+  dk.setVPolicy(LayoutPolicy.NONE);  
+  dk.setOverflow(Overflow.VISIBLE);
   
   dk.setTitle( dkl.getTitle() );
   
-  dk.addItem( new Label( dkl.getContents() ) );
+  Label lb = new Label( dkl.getContents() );
+  lb.setHeight(10);
+  lb.setMargin(2);
   
+  dk.addItem( lb );
+
+
   return dk;
  }
 
@@ -117,18 +132,71 @@ public class Renderer extends VLayout
    Layout hl = hspl? new HLayout():new VLayout();
    htmlCont.addMember(hl);
    
+   hl.setWidth(dim2String(layCont.getWidth()));
+   hl.setHeight(dim2String(layCont.getHeight()));
+   
+   
    if( ((Split) layCont).getComponents() != null )
     for( LayoutComponent lc : ((Split) layCont).getComponents() )
      processContainer(lc, hl);
   }
   else if( layCont instanceof Dock )
   {
-   Layout hl = new VStack();
+   final Layout hl = new VStack();
+  
+   hl.setMembersMargin(2);
+   hl.setMargin(2);
+   
+   hl.setBorder("1px solid black");
+
+   hl.setWidth(dim2String(layCont.getWidth()));
+   hl.setHeight(dim2String(layCont.getHeight()));
+   
+   hl.setAnimateMembers(true);  
+   hl.setAnimateMemberTime(300);  
+
+   hl.setCanAcceptDrop(true);  
+
+   hl.setDropLineThickness(4);  
+
+   Canvas dropLineProperties = new Canvas();  
+   dropLineProperties.setBackgroundColor("aqua");  
+   hl.setDropLineProperties(dropLineProperties);  
+
+   hl.setShowDragPlaceHolder(true);  
+
+   Canvas placeHolderProperties = new Canvas();  
+   placeHolderProperties.setBorder("2px dashed #8289A6");  
+   hl.setPlaceHolderProperties(placeHolderProperties);  
+   
    htmlCont.addMember(hl);
- 
+
    dockMap.put(layCont.getName(), hl);
+   
+   hl.addDropHandler( new DropHandler()
+   {
+    
+    @Override
+    public void onDrop(DropEvent event)
+    {
+     System.out.println( "Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
+    
+     ((Window)EventHandler.getDragTarget()).setAutoSize( true );
+    }
+   });
   }
 
+ }
+
+ public static String dim2String( int dim )
+ {
+  if( dim == 0 )
+   return "*";
+  
+  if( dim < 0 )
+   return String.valueOf(-dim)+"%";
+  
+  return String.valueOf(dim);
  }
 
 }

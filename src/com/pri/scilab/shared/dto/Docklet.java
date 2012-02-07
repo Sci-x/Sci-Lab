@@ -24,7 +24,7 @@ public class Docklet implements Serializable
   this.contents = contents;
  }
 
- public boolean isHasFrame()
+ public boolean hasFrame()
  {
   return hasFrame;
  }
@@ -34,7 +34,7 @@ public class Docklet implements Serializable
   this.hasFrame = hasFrame;
  }
 
- public boolean isHasHeader()
+ public boolean hasHeader()
  {
   return hasHeader;
  }
