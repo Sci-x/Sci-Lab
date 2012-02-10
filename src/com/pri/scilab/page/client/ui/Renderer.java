@@ -19,10 +19,12 @@ import com.smartgwt.client.types.LayoutPolicy;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.EdgedCanvas;
-import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
+import com.smartgwt.client.widgets.events.DragRepositionStartHandler;
+import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
+import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
 import com.smartgwt.client.widgets.events.DropEvent;
 import com.smartgwt.client.widgets.events.DropHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -57,29 +59,49 @@ public class Renderer extends VLayout
  {
   if( ! dkl.hasHeader() )
   {
-   HTMLFlow c = new HTMLFlow();
+   Label c = new Label();
    
    c.setContents(dkl.getContents());
-   
+//   c.setOverflow(Overflow.VISIBLE);
+  
    if( dkl.hasFrame() )
    {
-    EdgedCanvas ec = new EdgedCanvas();
+//    EdgedCanvas ec = new EdgedCanvas();
     
-    ec.addChild(c);
+//    VStack vs = new VStack();
+//    vs.setOverflow(Overflow.VISIBLE);
+//   
+//    vs.addMember(c);
+//    ec.setAutoHeight();
+//    ec.setWidth100();
+//    ec.setOverflow(Overflow.VISIBLE);
+
+//    ec.addChild(c);
     
-    ec.setWidth100();
+//    ec.adjustForContent(true);
     
-    return ec;
+//    ec.adjustForContent(false);
+    
+//    return ec;
+    
+    c.setShowEdges(true);
    }
    
    c.setWidth100();
    return c;
   }
   
-  Window dk = new Window();
+  final Window dk = new Window() {
+   
+   public void onDraw()
+   {
+    setAutoSize( true );
+   }
+   
+  };
 
   dk.setShowShadow(false);
-  dk.setAutoSize( true );
+  dk.setHPolicy(LayoutPolicy.FILL);
 //  dk.setWidth100();
   
   
@@ -88,7 +110,7 @@ public class Renderer extends VLayout
 
   // Window is draggable with "outline" appearance by default.  
   // "target" is the solid appearance.  
-  dk.setDragAppearance(DragAppearance.OUTLINE);  
+  dk.setDragAppearance(DragAppearance.TARGET);  
   dk.setCanDrop(true);  
 
   // customize the appearance and order of the controls in the window header  
@@ -110,11 +132,37 @@ public class Renderer extends VLayout
   
   Label lb = new Label( dkl.getContents() );
   lb.setHeight(10);
+  lb.setWidth100();
   lb.setMargin(2);
-  
+  lb.setCanSelectText(true);
+  lb.setOverflow(Overflow.VISIBLE);
+ 
   dk.addItem( lb );
+  
+  dk.addDragRepositionStartHandler( new DragRepositionStartHandler()
+  {
+   
+   @Override
+   public void onDragRepositionStart(DragRepositionStartEvent event)
+   {
+    System.out.println("Drag start");
+//    dk.setAutoSize(false);
+   }
+  });
+  
+  dk.addDragRepositionStopHandler( new DragRepositionStopHandler()
+  {
+   
+   @Override
+   public void onDragRepositionStop(DragRepositionStopEvent event)
+   {
+    System.out.println("Drag stop");
+//    dk.setAutoSize(true);
+   }
+  });
 
-
+//  dk.adjustForContent(false);
+  
   return dk;
  }
 
@@ -146,6 +194,8 @@ public class Renderer extends VLayout
   
    hl.setMembersMargin(2);
    hl.setMargin(2);
+   
+//   hl.setHPolicy(LayoutPolicy.FILL);
    
    hl.setBorder("1px solid black");
 
@@ -179,9 +229,13 @@ public class Renderer extends VLayout
     @Override
     public void onDrop(DropEvent event)
     {
-     System.out.println( "Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
+     System.out.println( hl.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
     
-     ((Window)EventHandler.getDragTarget()).setAutoSize( true );
+     
+     
+     ((Window)EventHandler.getDragTarget()).setAutoSize( false );
+//     ((Window)EventHandler.getDragTarget()).adjustForContent( true );
+//     ((Window)EventHandler.getDragTarget()).setWidth100();
     }
    });
   }

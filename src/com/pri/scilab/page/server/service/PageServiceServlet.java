@@ -88,14 +88,14 @@ public class PageServiceServlet extends RemoteServiceServlet implements PageServ
   d.setHasFrame(true);
   d.setHasHeader(true);
   d.setTarget("Left Strip");
-  d.setContents("Left Strip2<br/><b>Left Stri2</b><br/>Left Strip2<br/><b>Left Stri2</b><br/>Left Strip2<br/><b>Left Stri2</b><br/><br/><br/>Left Strip2");
+  d.setContents("Left Strip2<br/><b>Left Stri2</b><br/>Left Strip2<br/><br/><br/><b>Left Stri2</b><br/>Left Strip2<br/><b>Left Stri2</b><br/><br/><br/>Left Strip2");
   dkts.add(d);
 
   d = new Docklet();
   d.setHasFrame(true);
   d.setHasHeader(false);
   d.setTarget("Left Strip");
-  d.setContents("Left Strip3<br/><b>Left Stri3</b><br/>Left Strip3");
+  d.setContents("Left Strip3<br/><b>Left Stri3</b><br/>Left Strip3<br/><br/><br/><br/><br/><br/>Hello");
   dkts.add(d);
 
   d = new Docklet();
