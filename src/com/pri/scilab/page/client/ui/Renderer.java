@@ -231,9 +231,15 @@ public class Renderer extends VLayout
     {
      System.out.println( hl.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
     
+     Layout cont = (Layout)event.getSource(); 
+     
+     Window dropWin = (Window)EventHandler.getDragTarget();
+     
+     int padding = cont.getPadding()!=null?cont.getPadding():0;
      
      
-     ((Window)EventHandler.getDragTarget()).setAutoSize( false );
+     dropWin.setAutoSize( false );
+     dropWin.setWidth(((Layout)event.getSource()).getViewportWidth()-padding*2);
 //     ((Window)EventHandler.getDragTarget()).adjustForContent( true );
 //     ((Window)EventHandler.getDragTarget()).setWidth100();
     }
