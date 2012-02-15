@@ -21,10 +21,6 @@ import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
-import com.smartgwt.client.widgets.events.DragRepositionStartEvent;
-import com.smartgwt.client.widgets.events.DragRepositionStartHandler;
-import com.smartgwt.client.widgets.events.DragRepositionStopEvent;
-import com.smartgwt.client.widgets.events.DragRepositionStopHandler;
 import com.smartgwt.client.widgets.events.DropEvent;
 import com.smartgwt.client.widgets.events.DropHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
@@ -37,6 +33,9 @@ public class Renderer extends VLayout
  private Map<String, Layout> dockMap = new HashMap<String, Layout>();
  private List<Docklet> orphans = new ArrayList<Docklet>();
 
+
+ 
+ 
  public Renderer(Page pg)
  {
   setWidth100();
@@ -65,27 +64,7 @@ public class Renderer extends VLayout
 //   c.setOverflow(Overflow.VISIBLE);
   
    if( dkl.hasFrame() )
-   {
-//    EdgedCanvas ec = new EdgedCanvas();
-    
-//    VStack vs = new VStack();
-//    vs.setOverflow(Overflow.VISIBLE);
-//   
-//    vs.addMember(c);
-//    ec.setAutoHeight();
-//    ec.setWidth100();
-//    ec.setOverflow(Overflow.VISIBLE);
-
-//    ec.addChild(c);
-    
-//    ec.adjustForContent(true);
-    
-//    ec.adjustForContent(false);
-    
-//    return ec;
-    
     c.setShowEdges(true);
-   }
    
    c.setWidth100();
    return c;
@@ -139,29 +118,6 @@ public class Renderer extends VLayout
  
   dk.addItem( lb );
   
-  dk.addDragRepositionStartHandler( new DragRepositionStartHandler()
-  {
-   
-   @Override
-   public void onDragRepositionStart(DragRepositionStartEvent event)
-   {
-    System.out.println("Drag start");
-//    dk.setAutoSize(false);
-   }
-  });
-  
-  dk.addDragRepositionStopHandler( new DragRepositionStopHandler()
-  {
-   
-   @Override
-   public void onDragRepositionStop(DragRepositionStopEvent event)
-   {
-    System.out.println("Drag stop");
-//    dk.setAutoSize(true);
-   }
-  });
-
-//  dk.adjustForContent(false);
   
   return dk;
  }
@@ -240,14 +196,16 @@ public class Renderer extends VLayout
      
      dropWin.setAutoSize( false );
      dropWin.setWidth(((Layout)event.getSource()).getViewportWidth()-padding*2);
-//     ((Window)EventHandler.getDragTarget()).adjustForContent( true );
-//     ((Window)EventHandler.getDragTarget()).setWidth100();
     }
    });
+   
+   DockController dc = new DockController( hl );
+   
   }
 
  }
 
+ 
  public static String dim2String( int dim )
  {
   if( dim == 0 )
