@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.pri.scilab.shared.dto.Dock;
 import com.pri.scilab.shared.dto.Docklet;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -167,10 +168,11 @@ public class DockController
 
  private void editDecoration()
  {
+  DockDecorationDialog.edit( new Dock() );
  }
 
  private void addDocklet()
  {
-  DockletEditor.edit( new Docklet() );
+  DockletEditorDialog.edit( new Docklet() );
  }
 }
