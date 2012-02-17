@@ -21,6 +21,16 @@ public class Action
   this(text, action, null, null);
  }
  
+ public Action(String text, String action, String cls)
+ {
+  this(text, action, cls, null);
+ }
+
+ public Action(List<Action> subActions)
+ {
+  this(null, null, null, subActions);
+ }
+
  public Action(String text, String action, String cls, List<Action> subActions)
  {
   super();

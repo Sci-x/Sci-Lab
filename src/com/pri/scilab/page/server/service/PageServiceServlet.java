@@ -39,7 +39,7 @@ public class PageServiceServlet extends RemoteServiceServlet implements PageServ
   
   dk = new Dock();
   dk.setName("Left Strip");
-  dk.setWidth(100);
+  dk.setWidth(200);
   dk.setHeight(-100);
   
   hp.addChildComponent(dk);
@@ -77,6 +77,7 @@ public class PageServiceServlet extends RemoteServiceServlet implements PageServ
   dkts.add(d);
   
   d = new Docklet();
+  d.setTitle("The fact");
   d.setHasFrame(true);
   d.setHasHeader(true);
   d.setTarget("Left Strip");
@@ -87,7 +88,28 @@ public class PageServiceServlet extends RemoteServiceServlet implements PageServ
   d.setHasFrame(true);
   d.setHasHeader(true);
   d.setTarget("Left Strip");
-  d.setContents("Left Strip2<br/><b>Left Stri2</b><br/>Left Strip2");
+  d.setContents("Left Strip2<br/><b>Left Stri2</b><br/>Left Strip2<br/><br/><br/><b>Left Stri2</b><br/>Left Strip2<br/><b>Left Stri2</b><br/><br/><br/>Left Strip2");
+  dkts.add(d);
+
+  d = new Docklet();
+  d.setHasFrame(true);
+  d.setHasHeader(false);
+  d.setTarget("Left Strip");
+  d.setContents("Left Strip3<br/><b>Left Stri3</b><br/>Left Strip3<br/><br/><br/><br/><br/><br/>Hello");
+  dkts.add(d);
+
+  d = new Docklet();
+  d.setHasFrame(false);
+  d.setHasHeader(false);
+  d.setTarget("Left Strip");
+  d.setContents("Left Strip4<br/><b>Left Stri4</b><br/>Left Strip4");
+  dkts.add(d);
+
+  d = new Docklet();
+  d.setHasFrame(true);
+  d.setHasHeader(true);
+  d.setTarget("Body Strip");
+  d.setContents("Body Strip2<br/><b>Body Strip2</b><br/>Body Strip2");
   dkts.add(d);
 
   return p;

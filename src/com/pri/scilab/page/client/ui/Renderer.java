@@ -17,11 +17,12 @@ import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.types.HeaderControls;
 import com.smartgwt.client.types.LayoutPolicy;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.util.EventHandler;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.EdgedCanvas;
-import com.smartgwt.client.widgets.HTMLFlow;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.DropEvent;
+import com.smartgwt.client.widgets.events.DropHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -32,6 +33,9 @@ public class Renderer extends VLayout
  private Map<String, Layout> dockMap = new HashMap<String, Layout>();
  private List<Docklet> orphans = new ArrayList<Docklet>();
 
+
+ 
+ 
  public Renderer(Page pg)
  {
   setWidth100();
@@ -52,34 +56,40 @@ public class Renderer extends VLayout
 
  private Canvas createDockletVisual(Docklet dkl)
  {
-  if( dkl.isHasHeader() )
+  if( ! dkl.hasHeader() )
   {
-   HTMLFlow c = new HTMLFlow();
+   Label c = new Label();
    
    c.setContents(dkl.getContents());
+//   c.setOverflow(Overflow.VISIBLE);
+  
+   if( dkl.hasFrame() )
+    c.setShowEdges(true);
    
-   if( dkl.isHasFrame() )
-   {
-    EdgedCanvas ec = new EdgedCanvas();
-    
-    ec.addChild(c);
-    
-    return ec;
-   }
-   
+   c.setWidth100();
    return c;
   }
   
-  Window dk = new Window();
+  final Window dk = new Window() {
+   
+   public void onDraw()
+   {
+    setAutoSize( true );
+   }
+   
+  };
 
-  dk.setShowShadow(false);  
+  dk.setShowShadow(false);
+  dk.setHPolicy(LayoutPolicy.FILL);
+//  dk.setWidth100();
+  
   
   // enable predefined component animation  
   dk.setAnimateMinimize(true);  
 
   // Window is draggable with "outline" appearance by default.  
   // "target" is the solid appearance.  
-  dk.setDragAppearance(DragAppearance.OUTLINE);  
+  dk.setDragAppearance(DragAppearance.TARGET);  
   dk.setCanDrop(true);  
 
   // customize the appearance and order of the controls in the window header  
@@ -92,13 +102,22 @@ public class Renderer extends VLayout
 
   // these settings enable the portlet to autosize its height only to fit its contents  
   // (since width is determined from the containing layout, not the portlet contents)  
-  dk.setVPolicy(LayoutPolicy.NONE);  
-  dk.setOverflow(Overflow.VISIBLE);  
 
+  
+  dk.setVPolicy(LayoutPolicy.NONE);  
+  dk.setOverflow(Overflow.VISIBLE);
   
   dk.setTitle( dkl.getTitle() );
   
-  dk.addItem( new Label( dkl.getContents() ) );
+  Label lb = new Label( dkl.getContents() );
+  lb.setHeight(10);
+  lb.setWidth100();
+  lb.setMargin(2);
+  lb.setCanSelectText(true);
+  lb.setOverflow(Overflow.VISIBLE);
+ 
+  dk.addItem( lb );
+  
   
   return dk;
  }
@@ -117,18 +136,85 @@ public class Renderer extends VLayout
    Layout hl = hspl? new HLayout():new VLayout();
    htmlCont.addMember(hl);
    
+   hl.setWidth(dim2String(layCont.getWidth()));
+   hl.setHeight(dim2String(layCont.getHeight()));
+   
+   
    if( ((Split) layCont).getComponents() != null )
     for( LayoutComponent lc : ((Split) layCont).getComponents() )
      processContainer(lc, hl);
   }
   else if( layCont instanceof Dock )
   {
-   Layout hl = new VStack();
+   final Layout hl = new VStack();
+  
+   hl.setMembersMargin(2);
+   hl.setMargin(2);
+   
+//   hl.setHPolicy(LayoutPolicy.FILL);
+   
+   hl.setBorder("1px solid black");
+
+   hl.setWidth(dim2String(layCont.getWidth()));
+   hl.setHeight(dim2String(layCont.getHeight()));
+   
+   hl.setAnimateMembers(true);  
+   hl.setAnimateMemberTime(300);  
+
+   hl.setCanAcceptDrop(true);  
+
+   hl.setDropLineThickness(4);  
+
+   Canvas dropLineProperties = new Canvas();  
+   dropLineProperties.setBackgroundColor("aqua");  
+   hl.setDropLineProperties(dropLineProperties);  
+
+   hl.setShowDragPlaceHolder(true);  
+
+   Canvas placeHolderProperties = new Canvas();  
+   placeHolderProperties.setBorder("2px dashed #8289A6");  
+   hl.setPlaceHolderProperties(placeHolderProperties);  
+   
    htmlCont.addMember(hl);
- 
+
    dockMap.put(layCont.getName(), hl);
+   
+   hl.addDropHandler( new DropHandler()
+   {
+    
+    @Override
+    public void onDrop(DropEvent event)
+    {
+     System.out.println( hl.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
+    
+     Layout cont = (Layout)event.getSource(); 
+     
+     Window dropWin = (Window)EventHandler.getDragTarget();
+     
+     int padding = cont.getPadding()!=null?cont.getPadding():0;
+     
+     
+     dropWin.setAutoSize( false );
+     dropWin.setWidth(((Layout)event.getSource()).getViewportWidth()-padding*2);
+    }
+   });
+   
+   DockController dc = new DockController( hl );
+   
   }
 
+ }
+
+ 
+ public static String dim2String( int dim )
+ {
+  if( dim == 0 )
+   return "*";
+  
+  if( dim < 0 )
+   return String.valueOf(-dim)+"%";
+  
+  return String.valueOf(dim);
  }
 
 }
