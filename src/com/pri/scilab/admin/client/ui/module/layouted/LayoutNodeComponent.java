@@ -1,8 +1,8 @@
 package com.pri.scilab.admin.client.ui.module.layouted;
 
 import com.pri.scilab.admin.client.ui.module.activator.AbstractComponent;
-import com.pri.scilab.admin.client.ui.module.activator.Action;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
+import com.pri.scilab.shared.action.Action;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;

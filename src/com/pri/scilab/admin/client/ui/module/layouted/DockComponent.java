@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.pri.scilab.admin.client.ui.module.activator.Action;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
 import com.pri.scilab.admin.client.ui.module.activator.ComponentViewPort;
+import com.pri.scilab.shared.action.Action;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.util.ValueCallback;
 import com.smartgwt.client.widgets.Canvas;

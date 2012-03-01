@@ -3,6 +3,7 @@ package com.pri.scilab.admin.client.ui.module.activator;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pri.scilab.shared.action.ActionAdapter;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;

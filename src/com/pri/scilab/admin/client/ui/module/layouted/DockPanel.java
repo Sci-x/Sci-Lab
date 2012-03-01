@@ -1,9 +1,9 @@
 package com.pri.scilab.admin.client.ui.module.layouted;
 
 
-import com.pri.scilab.admin.client.ui.module.activator.ActionHandler;
 import com.pri.scilab.admin.client.ui.module.activator.ActionMenu;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
+import com.pri.scilab.shared.action.ActionHandler;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Label;

@@ -5,9 +5,9 @@ import java.util.Collection;
 
 import com.pri.scilab.admin.client.DataManager;
 import com.pri.scilab.admin.client.ui.module.activator.AbstractComponent;
-import com.pri.scilab.admin.client.ui.module.activator.Action;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
 import com.pri.scilab.admin.client.ui.module.activator.ComponentViewPort;
+import com.pri.scilab.shared.action.Action;
 import com.pri.scilab.shared.dto.PageLayout;
 
 public class LayoutsEditor extends AbstractComponent implements Component

@@ -2,7 +2,7 @@ package com.pri.scilab.page.client.ui;
 
 import java.util.ArrayList;
 
-import com.pri.scilab.admin.client.ui.module.activator.Action;
+import com.pri.scilab.shared.action.Action;
 
 public class DockActions
 {

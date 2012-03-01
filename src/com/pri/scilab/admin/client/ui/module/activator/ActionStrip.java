@@ -1,6 +1,8 @@
 package com.pri.scilab.admin.client.ui.module.activator;
 
 
+import com.pri.scilab.shared.action.Action;
+import com.pri.scilab.shared.action.ActionHandler;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.menu.MenuButton;

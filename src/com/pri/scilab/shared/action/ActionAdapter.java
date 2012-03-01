@@ -1,4 +1,4 @@
-package com.pri.scilab.admin.client.ui.module.activator;
+package com.pri.scilab.shared.action;
 
 import java.util.Collection;
 

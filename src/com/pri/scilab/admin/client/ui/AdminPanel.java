@@ -2,11 +2,11 @@ package com.pri.scilab.admin.client.ui;
 
 import java.util.ArrayList;
 
-import com.pri.scilab.admin.client.ui.module.activator.Action;
 import com.pri.scilab.admin.client.ui.module.activator.ActivatorTree;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
 import com.pri.scilab.admin.client.ui.module.activator.ComponentViewPort;
 import com.pri.scilab.admin.client.ui.module.layouted.LayoutsEditor;
+import com.pri.scilab.shared.action.Action;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.layout.HLayout;
 

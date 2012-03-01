@@ -199,7 +199,7 @@ public class Renderer extends VLayout
     }
    });
    
-   DockController dc = new DockController( hl );
+   DockController dc = new DockController( hl, htmlCont );
    
   }
 

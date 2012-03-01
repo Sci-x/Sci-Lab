@@ -5,10 +5,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.pri.scilab.admin.client.ui.module.activator.Action;
 import com.pri.scilab.admin.client.ui.module.activator.Component;
 import com.pri.scilab.admin.client.ui.module.activator.ComponentViewPort;
 import com.pri.scilab.admin.client.ui.module.activator.HierarchyListener;
+import com.pri.scilab.shared.action.Action;
 import com.pri.scilab.shared.dto.Dock;
 import com.pri.scilab.shared.dto.HSplit;
 import com.pri.scilab.shared.dto.LayoutComponent;

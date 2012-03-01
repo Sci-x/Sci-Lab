@@ -5,16 +5,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.pri.scilab.shared.dto.Dock;
+import com.pri.scilab.page.client.ui.DockDecorationDialog.DialogCallback;
+import com.pri.scilab.shared.dto.DockVisualCfg;
+import com.pri.scilab.shared.dto.DockVisualCfg.Background;
+import com.pri.scilab.shared.dto.DockVisualCfg.Frame;
 import com.pri.scilab.shared.dto.Docklet;
+import com.smartgwt.client.util.EventHandler;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Window;
+import com.smartgwt.client.widgets.events.DropEvent;
+import com.smartgwt.client.widgets.events.DropHandler;
 import com.smartgwt.client.widgets.layout.Layout;
+import com.smartgwt.client.widgets.layout.VStack;
 import com.smartgwt.client.widgets.menu.Menu;
 import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.menu.MenuItemSeparator;
 import com.smartgwt.client.widgets.menu.events.ItemClickEvent;
 import com.smartgwt.client.widgets.menu.events.ItemClickHandler;
 
-public class DockController
+public class DockController implements DialogCallback
 {
  private enum Actions
  {
@@ -28,16 +37,23 @@ public class DockController
  private static String actionAttribute = "_action";
  
  private List<Docklet> docklets = new ArrayList<Docklet>();
+ private Layout parent;
  private Layout container;
  private Collection<DockletFilter> filters;
  private Set<DockletFilter> activeFilters;
  
  private MenuItem filtersMenuItem;
  
+ private DockVisualCfg config;
  
- public DockController( Layout ly )
+ public DockController( DockVisualCfg cfg, Layout prnt )
  {
-  container = ly;
+  config = cfg;
+  parent = prnt;
+  
+  
+  createContainer();
+  
   
   Menu contextMenu = new Menu();
   
@@ -73,6 +89,60 @@ public class DockController
   
  }
 
+ private void createContainer()
+ {
+  container = new VStack();
+  
+  container.setMembersMargin(2);
+//  hl.setMargin(2);
+  
+//  hl.setHPolicy(LayoutPolicy.FILL);
+  
+  container.setBorder("1px solid black");
+
+  container.setWidth(dim2String(layCont.getWidth()));
+  container.setHeight(dim2String(layCont.getHeight()));
+  
+  container.setAnimateMembers(true);  
+  container.setAnimateMemberTime(300);  
+
+  container.setCanAcceptDrop(true);  
+
+  container.setDropLineThickness(4);  
+
+  Canvas dropLineProperties = new Canvas();  
+  dropLineProperties.setBackgroundColor("aqua");  
+  container.setDropLineProperties(dropLineProperties);  
+
+  container.setShowDragPlaceHolder(true);  
+
+  Canvas placeHolderProperties = new Canvas();  
+  placeHolderProperties.setBorder("2px dashed #8289A6");  
+  container.setPlaceHolderProperties(placeHolderProperties);  
+  
+  
+  container.addDropHandler( new DropHandler()
+  {
+   
+   @Override
+   public void onDrop(DropEvent event)
+   {
+    System.out.println( container.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
+   
+    Layout cont = (Layout)event.getSource(); 
+    
+    Window dropWin = (Window)EventHandler.getDragTarget();
+    
+    int padding = cont.getPadding()!=null?cont.getPadding():0;
+    
+    
+    dropWin.setAutoSize( false );
+    dropWin.setWidth(((Layout)event.getSource()).getViewportWidth()-padding*2);
+   }
+  });
+
+
+ }
 
  private Menu createFiltersSubmenu()
  {
@@ -168,11 +238,91 @@ public class DockController
 
  private void editDecoration()
  {
-  DockDecorationDialog.edit( new Dock() );
+  DockDecorationDialog.edit( new DockVisualCfg(), this );
  }
 
  private void addDocklet()
  {
   DockletEditorDialog.edit( new Docklet() );
+ }
+
+
+ @Override
+ public void dialogClosed(DockVisualCfg d)
+ {
+  if( d == null )
+   return;
+  
+  VStack nStack = new VStack();
+  
+  
+  if( d.getBackgroundStyle() == Background.COLOR || d.getBackgroundStyle() == Background.IMGNFILL )
+   nStack.setBackgroundColor(d.getBackgroundColor());
+  
+  if( d.getFrameStyle() == Frame.NONE )
+   nStack.setBorder("none");
+  if( d.getFrameStyle() == Frame.FRAME )
+   nStack.setShowEdges(true);
+  else if( d.getFrameStyle() == Frame.BORDER )
+   nStack.setBorder(d.getBorderThicknes()+"px "+d.getBorderStyle()+" "+d.getBorderColor());
+  
+
+  Canvas[] chld = container.getMembers();
+ 
+  for( Canvas c : chld )
+  {
+   c.removeFromParent();
+   
+   if( c instanceof Window )
+   {
+    ((Window)c).setAutoSize(false);
+   }
+  }
+  
+  container.removeMembers(chld);
+  
+  nStack.setMargin( d.getMargin() );
+  nStack.setPadding( d.getPadding() );
+  
+  
+  for( Canvas c : chld )
+  {
+   nStack.addMember(c);
+  }
+
+
+  int n = parent.getMemberNumber(container);
+  
+  parent.removeMember(container);
+  
+  parent.addMember(nStack, n);
+  
+  container = nStack;
+  
+  for( Canvas c : chld )
+  {
+   if( c instanceof Window )
+   {
+    ((Window)c).setAutoSize(true);
+   }
+   else
+    c.setWidth100();
+  }
+  
+//  parent.reflow();
+//  parent.redraw();
+//  container.reflow();
+//  container.redraw();
+
+
+//  container.setMembers(chld);
+  
+//  for( Canvas c : container.getMembers() )
+//  {
+//   if( c instanceof Window )
+//   {
+//    ((Window)c).setAutoSize(true);
+//   }
+//  }
  }
 }

@@ -2,6 +2,9 @@ package com.pri.scilab.admin.client.ui.module.activator;
 
 import java.util.List;
 
+import com.pri.scilab.shared.action.Action;
+import com.pri.scilab.shared.action.ActionHandler;
+
 
 
 public interface Component extends ActionHandler<Component>
