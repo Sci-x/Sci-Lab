@@ -23,7 +23,7 @@ import com.smartgwt.client.widgets.menu.MenuItemSeparator;
 import com.smartgwt.client.widgets.menu.events.ItemClickEvent;
 import com.smartgwt.client.widgets.menu.events.ItemClickHandler;
 
-public class DockController implements DialogCallback
+public class DockView implements DialogCallback
 {
  private enum Actions
  {
@@ -36,7 +36,8 @@ public class DockController implements DialogCallback
  private static String objectAttribute = "_object";
  private static String actionAttribute = "_action";
  
- private List<Docklet> docklets = new ArrayList<Docklet>();
+ private List<DockletView> docklets = new ArrayList<DockletView>();
+ 
  private Layout parent;
  private Layout container;
  private Collection<DockletFilter> filters;
@@ -46,14 +47,15 @@ public class DockController implements DialogCallback
  
  private DockVisualCfg config;
  
- public DockController( DockVisualCfg cfg, Layout prnt )
+ public DockView( DockVisualCfg cfg, Layout prnt )
  {
   config = cfg;
   parent = prnt;
   
   
-  createContainer();
+  container = createContainer();
   
+  parent.addMember( container );
   
   Menu contextMenu = new Menu();
   
@@ -89,19 +91,29 @@ public class DockController implements DialogCallback
   
  }
 
- private void createContainer()
+ private Layout createContainer()
  {
-  container = new VStack();
+  Layout container = new VStack();
   
   container.setMembersMargin(2);
-//  hl.setMargin(2);
-  
-//  hl.setHPolicy(LayoutPolicy.FILL);
-  
-  container.setBorder("1px solid black");
 
-  container.setWidth(dim2String(layCont.getWidth()));
-  container.setHeight(dim2String(layCont.getHeight()));
+  if( config.getBackgroundStyle() == Background.COLOR || config.getBackgroundStyle() == Background.IMGNFILL )
+   container.setBackgroundColor(config.getBackgroundColor());
+  
+  if( config.getPadding() != 0 )
+   container.setPadding( config.getPadding() );
+  
+  if( config.getMargin() != 0 )
+   container.setMargin( config.getMargin() );
+  
+
+  if(config.getFrameStyle() == Frame.BORDER )
+   container.setBorder(config.getBorderThicknes()+"px "+config.getBorderStyle()+" "+config.getBorderColor());
+  else if( config.getFrameStyle() == Frame.FRAME )
+   container.setShowEdges(true);
+
+  container.setWidth(Util.dim2String(config.getWidth()));
+  container.setHeight(Util.dim2String(config.getHeight()));
   
   container.setAnimateMembers(true);  
   container.setAnimateMemberTime(300);  
@@ -127,7 +139,7 @@ public class DockController implements DialogCallback
    @Override
    public void onDrop(DropEvent event)
    {
-    System.out.println( container.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
+//    System.out.println( container.getDropPosition()+" Source: "+event.getSource().getClass()+" Drop: "+EventHandler.getDragTarget().getClass() );
    
     Layout cont = (Layout)event.getSource(); 
     
@@ -141,6 +153,8 @@ public class DockController implements DialogCallback
    }
   });
 
+  
+  return container;
 
  }
 
@@ -238,7 +252,7 @@ public class DockController implements DialogCallback
 
  private void editDecoration()
  {
-  DockDecorationDialog.edit( new DockVisualCfg(), this );
+  DockDecorationDialog.edit( config, this );
  }
 
  private void addDocklet()
@@ -252,77 +266,43 @@ public class DockController implements DialogCallback
  {
   if( d == null )
    return;
-  
-  VStack nStack = new VStack();
-  
-  
-  if( d.getBackgroundStyle() == Background.COLOR || d.getBackgroundStyle() == Background.IMGNFILL )
-   nStack.setBackgroundColor(d.getBackgroundColor());
-  
-  if( d.getFrameStyle() == Frame.NONE )
-   nStack.setBorder("none");
-  if( d.getFrameStyle() == Frame.FRAME )
-   nStack.setShowEdges(true);
-  else if( d.getFrameStyle() == Frame.BORDER )
-   nStack.setBorder(d.getBorderThicknes()+"px "+d.getBorderStyle()+" "+d.getBorderColor());
-  
 
-  Canvas[] chld = container.getMembers();
- 
-  for( Canvas c : chld )
-  {
-   c.removeFromParent();
-   
-   if( c instanceof Window )
-   {
-    ((Window)c).setAutoSize(false);
-   }
-  }
+  int pos = parent.getMemberNumber( container );
   
-  container.removeMembers(chld);
+  parent.removeChild( container );
   
-  nStack.setMargin( d.getMargin() );
-  nStack.setPadding( d.getPadding() );
+  parent.addMember( createContainer(), pos );
   
-  
-  for( Canvas c : chld )
-  {
-   nStack.addMember(c);
-  }
+//  if( config.getBackgroundStyle() != d.getBackgroundStyle() )
+//  
+//  if( config.getBackgroundStyle() == Background.COLOR || config.getBackgroundStyle() == Background.IMGNFILL )
+//   container.setBackgroundColor(config.getBackgroundColor());
+//  
+//  if( config.getPadding() != 0 )
+//   container.setPadding( config.getPadding() );
+//  
+//  if( config.getMargin() != 0 )
+//   container.setMargin( config.getMargin() );
+//  
+//
+//  if(config.getFrameStyle() == Frame.BORDER )
+//   container.setBorder(config.getBorderThicknes()+"px "+config.getBorderStyle()+" "+config.getBorderColor());
+//  else if( config.getFrameStyle() == Frame.FRAME )
+//   container.setShowEdges(true);
 
 
-  int n = parent.getMemberNumber(container);
-  
-  parent.removeMember(container);
-  
-  parent.addMember(nStack, n);
-  
-  container = nStack;
-  
-  for( Canvas c : chld )
-  {
-   if( c instanceof Window )
-   {
-    ((Window)c).setAutoSize(true);
-   }
-   else
-    c.setWidth100();
-  }
-  
-//  parent.reflow();
-//  parent.redraw();
-//  container.reflow();
-//  container.redraw();
+ }
 
 
-//  container.setMembers(chld);
+ public void addDocklet(DockletView dockletView)
+ {
+  docklets.add(dockletView);
   
-//  for( Canvas c : container.getMembers() )
-//  {
-//   if( c instanceof Window )
-//   {
-//    ((Window)c).setAutoSize(true);
-//   }
-//  }
+  container.addMember(dockletView.getCanvas());
+ }
+
+ public Canvas getCanvas()
+ {
+  return container;
  }
 }

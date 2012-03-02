@@ -56,6 +56,9 @@ public class DockVisualCfg
  private boolean     backgroundRepeatY;
  private boolean     showToolbar;
 
+ private int width;
+ private int height;
+ 
  private int margin;
  private int padding;
  
@@ -197,6 +200,26 @@ public class DockVisualCfg
  public void setPadding(int padding)
  {
   this.padding = padding;
+ }
+
+ public void setWidth(int width)
+ {
+  this.width=width;
+ }
+
+ public void setHeight(int height)
+ {
+  this.height = height;
+ }
+
+ public int getWidth()
+ {
+  return width;
+ }
+
+ public int getHeight()
+ {
+  return height;
  }
 
 }
